@@ -1,0 +1,20 @@
+P12 Retro - full source, 26 October 2026
+
+Extract this ZIP and upload its CONTENTS to the root of your GitHub repository.
+Include the hidden .github folder. Uploading only the ZIP does not run Actions.
+
+Open Actions > Build Mac DMG with VST3 > Run workflow.
+When it succeeds, download P12-Retro-AppleSilicon-DMG-with-VST3 from Artifacts.
+Inside the downloaded artifact ZIP is the DMG containing the app and VST3
+(plus AU and the desktop app). It targets Apple Silicon.
+
+The Mac workflow has been prepared but has not yet run on a Mac. A successful
+runner build and testing on macOS are still required. Builds are not notarized.
+
+Included: desktop, native host, standalone/plugin, Android, tests, installers,
+GitHub/GitLab CI, manual-save fix, TUNE AT +/-24 and repaired Android icons.
+Excluded: local build caches, installed dependencies, compiled outputs,
+diagnostic logs, private signing keys and personal sessions.
+
+The older Build P12 Retro workflow can build every platform; the dedicated
+Mac workflow above lets you run only the Mac build.

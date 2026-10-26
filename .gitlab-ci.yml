@@ -1,0 +1,139 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+
+stages: [test, build, release]
+
+variables:
+  P12_BUILD_WINDOWS: "true"
+  P12_BUILD_MAC: "false"
+  P12_WINDOWS_RUNNER_TAG: "saas-windows-medium-amd64"
+  P12_MAC_RUNNER_TAG: "saas-macos-medium-m1"
+
+source-tests:
+  stage: test
+  image: node:22-bookworm
+  script:
+    - |
+      set -eu
+      cd app
+      for t in tests-full15-integrated.cjs tests-rossum-encoder-unchanged.cjs tests-native-host-realtime-source.cjs tests-safety-layer-source.cjs tests-save-playback-snapshot.cjs tests-native-plan-compiler.cjs tests-native-pad-controls.cjs tests-transport-controller.cjs tests-recovery-worker.cjs; do
+        node "$t"
+      done
+      cd native-host
+      for t in tests-knock tests-sp-character tests-native tests-pad-controls; do
+        g++ -std=c++20 -O2 -UNDEBUG -I. "$t.cpp" -o "/tmp/$t"
+        "/tmp/$t"
+      done
+      cd ../../android
+      node tests/full15-integrity.cjs
+      node tests/manual-save-only.cjs
+      cd app/src/main/assets
+      node ../../../../tests/hfe-hardware-layout.cjs
+
+android:
+  stage: build
+  image: gradle:8.9-jdk17
+  needs: [source-tests]
+  variables:
+    GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+    ANDROID_HOME: "$CI_PROJECT_DIR/.android-sdk"
+  script:
+    - bash scripts/ci-android.sh
+  artifacts:
+    name: "p12-retro-android-$CI_COMMIT_SHORT_SHA"
+    paths: ["dist/*.apk"]
+    expire_in: 30 days
+
+windows:
+  stage: build
+  timeout: 2h
+  tags: ["$P12_WINDOWS_RUNNER_TAG"]
+  needs: [source-tests]
+  rules:
+    - if: '$P12_BUILD_WINDOWS == "true"'
+  script:
+    - |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      try {
+        . ./scripts/ci-node-windows.ps1
+        choco install innosetup --no-progress -y
+        if ($LASTEXITCODE -notin @(0, 1641, 3010)) { throw 'Inno Setup installation failed' }
+        cmake --version
+        if ($LASTEXITCODE -ne 0) { throw 'CMake unavailable' }
+        $version = '1.0.0'
+        if ($env:CI_COMMIT_TAG -match '^v(\d+\.\d+\.\d+)$') { $version = $Matches[1] }
+        ./scripts/build-windows.ps1 -Version $version -SkipTests
+        New-Item -ItemType Directory -Force dist | Out-Null
+        Copy-Item installer/Output/*.exe dist/
+      } catch {
+        [Console]::Error.WriteLine($_.ToString())
+        exit 1
+      }
+  artifacts:
+    name: "p12-retro-windows-$CI_COMMIT_SHORT_SHA"
+    when: always
+    paths:
+      - dist/*.exe
+      - plugin/build/P12Retro_artefacts/Release/VST3/
+      - plugin/build/P12Retro_artefacts/Release/Standalone/*.exe
+      - app/native/p12-vst-host.exe
+    expire_in: 30 days
+
+mac:
+  stage: build
+  timeout: 2h
+  image: macos-15-xcode-16
+  variables:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+  tags: ["$P12_MAC_RUNNER_TAG"]
+  needs: [source-tests]
+  rules:
+    - if: '$P12_BUILD_MAC == "true"'
+    - when: manual
+      allow_failure: true
+  script:
+    - |
+      set -euo pipefail
+      command -v cmake >/dev/null || brew install cmake
+      node --version
+      xcodebuild -version
+      version=1.0.0
+      if [[ "${CI_COMMIT_TAG:-}" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then version="${BASH_REMATCH[1]}"; fi
+      bash scripts/build-mac.sh "$version" 2>&1 | tee build-mac.log
+      mkdir -p dist
+      cp installer/Output/*.pkg dist/
+  artifacts:
+    name: "p12-retro-mac-$CI_COMMIT_SHORT_SHA"
+    when: always
+    paths: ["dist/*.pkg", build-mac.log]
+    expire_in: 30 days
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/cli:latest
+  variables:
+    GLAB_ENABLE_CI_AUTOLOGIN: "true"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/'
+  needs:
+    - job: android
+      artifacts: true
+    - job: windows
+      optional: true
+      artifacts: true
+    - job: mac
+      optional: true
+      artifacts: true
+  script:
+    - >-
+      glab release create "$CI_COMMIT_TAG" dist/*
+      --repo "$CI_PROJECT_URL"
+      --name "P12 Retro $CI_COMMIT_TAG"
+      --notes "Builds from $CI_COMMIT_SHA. Assets include Android and any enabled desktop builds. An Android-debug APK is a test build signed with a temporary debug key."
+      --use-package-registry
