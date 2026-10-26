@@ -1,0 +1,20 @@
+P-12 v1.0 — Rossum sequencer pitch + triplet + tempo update
+2026-10-02
+
+Changes in this build:
+- Rossum native .sp12 sequence playback now applies the per-event TUNE/DECAY parameter byte as a pitch override for sampled pads, instead of always replaying the raw sample at base pitch.
+- This targets the common SP workflow where a sample is recorded fast/high to save sample time and then played back tuned down in the sequence.
+- Native Rossum event timing remains at 24 PPQN and exact imported sub-step timing is retained.
+- P-12 Time Correct now quantizes on a 24-PPQN tick grid. Real triplet positions are supported:
+    1/4T = 16 ticks
+    1/8T = 8 ticks
+    1/16T = 4 ticks
+    1/32T = 2 ticks
+  Straight values remain 24/12/6/3 ticks.
+- Note Repeat + live recording now retains these sub-step/triplet positions in pattern micro-events instead of collapsing them onto 16th-note cells.
+- SP12 export uses P-12 micro-events when present, so triplet timing can round-trip into the one-file .sp12 sequence stream.
+- P-12 BPM range increased from 60–180 BPM to 20–400 BPM (knob, typed BPM, and tap tempo).
+- Product naming remains P-12 v1.0 / package 1.0.0.
+
+Important implementation note:
+The Rossum per-event parameter is now interpreted for sample-pitch playback using the SP-1200's documented +/- fifth tuning span. The exact original E-mu lookup table is not published in the project source, so this build maps the stored 8-bit parameter to the nearest semitone across that documented span. Native bytes are still preserved for unedited imported sequences.

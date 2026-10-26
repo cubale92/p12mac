@@ -1,0 +1,19 @@
+P-12 FULL15 - HFE LOAD FILE-PICKER FIX - 2026-10-10
+
+The project integrity listener was treating binary .hfe files as JSON and stopping
+the normal Load event before it reached the existing HFE importer. HFE now bypasses
+that JSON-only check like .sp12 and uses the existing HFE-to-SP12 project loader.
+
+Verified through the actual Load file input, not a direct call to the loader:
+FORESTKKO.sp12 -> HFE export -> Load CHECK.HFE restores seven sounds and three
+sequences, sequence/song RAM and routing. Prior project mute and master volume
+are reset. Malformed HFE displays HFE IMPORT ERROR without replacing the project.
+Physical reference-pair decoding and integrated preflight also pass.
+
+HFE exporter, .sp12 importer and protected Rossum export encoder unchanged.
+Includes all previous fixes, full-width pads, mute synchronization, and Song /
+Playlist directly below Reverb Space in both layouts.
+
+Complete source/build package. Extract to a fresh folder and run
+BUILD_FULL15_ORIGINAL_GUI.cmd on Windows. No newly compiled Windows executable.
+Physical hardware playback testing remains separate.

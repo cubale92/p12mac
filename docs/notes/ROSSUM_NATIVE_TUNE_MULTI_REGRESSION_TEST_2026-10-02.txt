@@ -1,0 +1,8 @@
+P-12 native Rossum tune/multi regression checks
+
+PASS: firmware Multi-Pitch 07 06 04 02 00 0F 0D 0B -> +7,+6,+4,+2,0,-1,-3,-5 semitones
+PASS: signed 4-bit Tune AT encode/decode round-trips all -8..+7 values
+PASS: firmware Multi-Level 50 70 90 B0 C0 D0 E0 F0 -> monotonically increasing levels 5,7,9,11,12,13,14,15
+PASS: HAX active sound records 24,25,26,30,31 map to A1,A2,A3,A7,A8 (no active Bank D)
+PASS: JavaScript syntax check passed for P-12.html, P-12.v118.html, P-12_v1.0.html
+PASS: source diff against previous build is limited to native event pitch codec + native event level scaling; native tick/swing/PPQ scheduler math is unchanged.

@@ -1,0 +1,28 @@
+P-12 FULL15 — Larger pads / pad response update — 10 October 2026
+
+Includes the complete previous Mixer 32 insert/transport update.
+Extract to a fresh folder and run BUILD_FULL15_ORIGINAL_GUI.cmd to finish the
+Windows build, then START_P12.cmd or the newly built installer.
+
+Pad changes:
+- Larger pads: minimum 160px wide and 230px high on the desktop main page.
+  The bank retains all eight pads; the row scrolls horizontally when needed.
+- Larger 30px option buttons, readable pad names and sample names.
+- Load/remove tools at the top; reverse/slice/stem/warp and trim tools at
+  the bottom, leaving the center available for playing.
+- Tool rows and sliders never invoke the pad strike handler.
+- Tool presses no longer move the entire pad; held-pad feedback is reserved
+  for performance presses.
+- Already-running audio takes a synchronous strike path, avoiding an async
+  audio initialization wait for every hit. First use still initializes audio.
+- Pointer capture and release/cancel cleanup prevent stuck pad repeats.
+  Releasing one pad does not stop the other pad's held repeat.
+
+Validation: browser checks for larger geometry, separated option rows,
+20 synchronous ready-audio strike dispatches, no repeated initialization,
+no strikes from options/trim sliders/right-click, and all eight pads present
+at 1700px and 900px window widths. Integrated FULL15 preflight also passes.
+The Rossum .sp12 encoder remains unchanged by protected-source hash.
+
+This is the complete source/build package. Windows EXE compilation and
+physical input-to-speaker latency cannot be measured in this Linux environment.

@@ -1,0 +1,80 @@
+{
+  "name": "p12-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "P-12 v1.0 Windows sampler/sequencer with native Rossum SP-1200 .sp12 samples/sequences/songs/stored mixes, Tune BF/Tune AT, 24-PPQN triplets, 20-400 BPM, multi-disk HFE/MKSREC1 export and Rossum MIDI bridge",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis --x64 --config.directories.output=dist-installer",
+    "dist:portable": "electron-builder --win portable --x64 --config.directories.output=dist-portable",
+    "build:native:mac": "bash scripts/build-native-mac.sh",
+    "dist:mac:arm64": "npm run build:native:mac && electron-builder --mac dmg zip --arm64 --publish never --config.directories.output=dist-mac-arm64"
+  },
+  "devDependencies": {
+    "electron": "44.2.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "com.p12.sampler",
+    "productName": "P-12 v1.0",
+    "files": [
+      "P-12.html",
+      "piano-detached.html",
+      "playlist-detached.html",
+      "main.js",
+      "preload.js",
+      "p12-sp-mixer.js",
+      "p12-wave-editor.js",
+      "p12-library.js",
+      "build/icon.ico",
+      "build/icon.png",
+      "vendor/jszip.min.js",
+      "vendor/LICENSE-JSZIP-MIT.txt",
+      "mixer-detached.html",
+      "transport-controller.cjs",
+      "recovery-worker.cjs",
+      "p12-wireless-midi.cjs",
+      "p12-wireless-client.js",
+      "p12-wireless-ui.js",
+      "wireless-phone.html",
+      "vendor/ws/**/*",
+      "p12-device-discovery.cjs"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "extraResources": [
+      {
+        "from": "native",
+        "to": "native",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "artifactName": "P-12-v1.0-${arch}.${ext}",
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.music",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "P-12 uses microphone/audio-input access when you choose to record samples."
+      },
+      "icon": "build/icon.png",
+      "identity": "-"
+    },
+    "dmg": {
+      "title": "P-12 v1.0"
+    }
+  }
+}

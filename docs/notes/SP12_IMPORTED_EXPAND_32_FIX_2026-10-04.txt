@@ -1,0 +1,14 @@
+P-12 SP12 IMPORTED + EXPAND FIX — 2026-10-04
+
+Fixes the exact workflow:
+1. Load a Rossum .sp12 into P-12.
+2. Add more samples to previously empty pads/banks (for example Bank C).
+3. Extract back to one .sp12.
+
+Previous bug:
+Imported-template export was restricted to the number of active sound slots in the source .sp12 and could show SP12 SLOT LIMIT even though the project had fewer than 32 pads and fit Rossum sound RAM.
+
+New behavior:
+Imported projects use the corrected 32-pad allocator/directory writer. The imported Rossum image remains the machine-state base, current P-12 Tune/Mix/sequence state is written, and the hardware-confirmed five-sample 0x800 trigger preamble remains unchanged.
+
+HFE export is unchanged.

@@ -1,0 +1,31 @@
+P-12 v1.0 — Audio Device no-silence recovery
+
+Root cause addressed:
+- Older builds persisted a Chromium/Electron output deviceId.
+- initAudio() reapplied that ID at every launch.
+- A stale/changed Windows endpoint can leave the AudioContext running while producing no audible output.
+- The device list also incorrectly required microphone permission before listing outputs.
+
+Changes:
+- P-12 always starts on Windows/System Default output.
+- Persisted outputDeviceId from older builds is cleared automatically.
+- initAudio() never calls setSinkId().
+- If saved sample-rate/buffer preferences prevent AudioContext creation, P-12 clears them and retries with browser defaults.
+- Audio Device > Output no longer depends on microphone permission.
+- Explicit output selection is session-only.
+- Failed manual output selection falls back to system default.
+- Audio Device panel now shows AudioContext state and active routing policy.
+- Opening Audio Device starts/resumes the AudioContext.
+
+Preserved:
+- Rossum/SP12 work
+- Tune BF / Tune AT
+- direct BPM entry
+- sequencer/song/mix changes from the current build
+
+Validation:
+- all three HTML entry files are identical
+- all inline JavaScript blocks pass node --check
+- ZIP integrity passes
+
+Runtime playback still requires confirmation on the user's Windows audio system.

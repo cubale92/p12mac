@@ -1,0 +1,23 @@
+P-12 Android 1.0.9 - source recovery only
+
+The original signing keystore is NOT included. No replacement key was generated.
+The original /root/.android/debug.keystore is unavailable in the current workspace.
+A private signing key cannot be recovered from an APK or its public certificate.
+Do not treat this archive as a complete signing backup.
+
+Source repository: https://github.com/8cee/P12-Android
+Exact source commit: d82f28d5115b290ab5f297840c3ae8f659748851
+Version: 1.0.9-full15-android, versionCode 10
+All tracked source files are included unchanged under source/.
+
+Previously recorded signing certificate SHA-256:
+1a0b6a81d0f0b8ad8ff6904324ae625b31385f4a07b39884fe273afae7ee7f4e
+Use this fingerprint to verify any recovered keystore against the original APK.
+
+The unmodified Gradle project uses the machine's default debug signing key.
+Building on a different machine can generate a DIFFERENT key, which does not
+preserve the signing identity of the delivered APK. Recover and verify the
+original keystore before producing an update intended for existing installs.
+
+Build environment used previously: JDK 17, Gradle 8.9, Android SDK 35,
+Android Gradle Plugin 8.7.3. See source/README-ANDROID.txt.

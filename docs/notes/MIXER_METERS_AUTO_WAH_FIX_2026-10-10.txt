@@ -1,0 +1,47 @@
+P-12 FULL15 — Mixer meters / native Auto Wah fix — 2026-10-10
+
+Includes all previous October 10 mixer gain, Track 0, timing, recovery and HFE fixes.
+Extract this ZIP to a fresh folder. Run BUILD_FULL15_ORIGINAL_GUI.cmd and allow
+both the native host and Electron build to finish. Do not reuse an older host EXE.
+
+Meter changes:
+- Detached Mixer-32 receives lightweight level packets from the main project.
+- WebAudio pad / track / master meters remain active when Native Audio is OFF.
+- Native peak telemetry uses a dedicated small nativeMeters command at ~30 Hz.
+- Callback accumulates peaks between meter reads so short hits are retained.
+- Pad / track / master native levels measure the louder of both stereo channels.
+- Refresh analyser references after backend/context changes; float dBFS readings.
+- Meter frames never rebuild the mixer DOM or retrigger transport.
+- Original separate mixer window, strip sizes, scrolling and pinned Master retained.
+
+Auto Wah:
+- Native host previously silently skipped mod_autowah.
+- Stereo swept bandpass now runs in pad, track and master native insert slots.
+- Rate, Depth, Reso, Mix and slot bypass respected; no callback allocations.
+- VST instrument pad level no longer silently capped at 1.5x.
+
+VST3 behavior:
+- With Native Audio ON, native callback processes pad / track / master VST3 chains.
+- With Native Audio OFF, the existing unsafe legacy PCM bridge remains disabled;
+  VST inserts are bypassed. Selecting a VST insert auto-enables native audio.
+- Actual third-party VST3 editor/DSP and Windows host compilation need Windows validation.
+
+Validation:
+- FULL15 integrated source/preflight tests pass, including protected SP12 encoder check.
+- Real Chromium oscillator validates pad, Track 4 and master WebAudio meters and
+  detached meter IPC, plus native feed simulation and mode-switch back to WebAudio.
+- Mixer browser scrolling tests pass at 1700x980, 900x650 and 700x450.
+- C++ native Auto Wah test validates audible modulation, stereo matching, dry mix,
+  finite output and zero callback allocations; native pad/mixer control tests pass.
+
+Proven .sp12 encoder unchanged. Physical Rossum playback test still pending.
+
+Project replacement fix:
+- Unload previous pad/track/Track 0 VST inserts, including bypassed slots.
+- Rebuild live Master chain and open mixer after project load.
+- Save and restore global bit depth/rate, drive, reverb size and SSL compressor
+  controls; older files without these fields use original defaults.
+- Clear stale 8 Levels backups/UI flags and refresh all submix audio controls.
+- Restore subchannel gain above the previous 150% cap.
+- Dedicated real-browser test validates modified-project -> old-file replacement,
+  VST retirement, visible faders, global FX save/reload and boosted sub levels.

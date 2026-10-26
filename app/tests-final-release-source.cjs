@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs');const assert=require('node:assert/strict');
+const main=fs.readFileSync('main.js','utf8');
+const gate=fs.readFileSync('FINAL_RELEASE_GATE.cmd','utf8');
+assert(main.includes("process.argv.includes('--p12-smoke-test')"),'smoke flag missing');
+assert(main.includes('SMOKE TEST PASS: main window reached ready-to-show'),'smoke ready marker missing');
+assert(main.includes("setTimeout(()=>app.quit(),750)"),'smoke auto quit missing');
+assert(gate.includes('tests-full15-integrated.cjs'),'integrated preflight missing from release gate');
+assert(gate.includes('tests-sp-character-export-isolation.cjs'),'Rossum isolation gate missing');
+assert(gate.includes('tests-native-host-realtime-source.cjs'),'native realtime gate missing');
+assert(gate.includes('BUILD_P12_VST_HOST.ps1'),'fresh VST3 build missing');
+assert(gate.includes('--p12-smoke-test'),'Electron startup smoke missing');
+console.log('PASS final release source gate');

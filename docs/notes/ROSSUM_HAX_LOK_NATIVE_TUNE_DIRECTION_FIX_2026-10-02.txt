@@ -1,0 +1,15 @@
+P-12 Rossum native Tune direction fix — 2026-10-02
+
+Evidence from user hardware projects:
+- HAX: native sound 30 uses tune code 14. Previous P-12 mapping 7-code rendered it as -7. Corrected mapping code-7 renders it as +7 before the existing +1 calibration.
+- HAX Multi-Pitch sound uses native codes 6, 4, 3. Previous mapping rendered +1,+3,+4 (reversed direction). Corrected mapping renders -1,-3,-4 before the existing +1 calibration.
+- _LOK contains additional native tune codes 15, 2, 4, 11, 13, providing both sides of centre 7 and confirming this is not a fixed +/-3 offset problem.
+
+Preserved:
+- Existing +1 native Tune AT calibration
+- Native Rossum per-hit event tuning
+- Adaptive Time Correct grid
+- Exact native tick playback / swing
+- Tune BF path
+
+No sequencer timing code was changed in this patch.

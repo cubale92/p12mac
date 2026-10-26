@@ -1,0 +1,10 @@
+P-12 VST2 + VST3 support pass
+
+- Recursive scanner now returns VST3 and VST2/legacy candidates.
+- Windows .dll files are no longer ignored; they are surfaced as VST2/legacy candidates for native-host validation.
+- macOS .vst bundles and Linux .so candidates are recognized.
+- Plugin list and Mixer-32 insert menus show the plugin format.
+- JSON insert state preserves vst2: and vst3: assignments.
+- Electron bridge exposes scan/load aliases for VST2 and VST3.
+- Native-host payloads include format and VST2 loads use loadVST2 while VST3 keeps loadVST3.
+- Existing vst3: project assignments remain backward compatible.

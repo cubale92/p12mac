@@ -1,0 +1,6 @@
+P-12 / Windows full source package - 2026-10-04
+Based on the latest BOTH_MIXERS_SP12_BAKE_FIX full Windows package.
+Updates: clean Hi-Fi new decoded samples, natural pitched-down tails, lighter transients for clean imports, improved polyphony headroom, numeric knob entry, end-of-loop pattern queue. Existing Pattern Copy/Paste and SP-1200/HFE fixes retained.
+This is source/build material, not a compiled installer EXE.
+Run BUILD_P12_WINDOWS_EXE.cmd on Windows with Node.js to create dist-installer, but a working p12-vst-host.exe is also needed for native VST instruments.
+IMPORTANT: Native host code still has no real-time PCM bridge from P12 WebAudio, therefore Ozone/effect inserts on pad, track, subchannel and master cannot process actual P12 audio. This remains unfinished. Track plugin UI/assignment slots are not proof of audio processing.

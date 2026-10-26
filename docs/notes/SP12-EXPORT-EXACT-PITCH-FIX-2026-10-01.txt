@@ -1,0 +1,7 @@
+P-12 v1.1.4
+
+- Extract -> Rossum checks the exact rendered/tuned waveform sample count before opening Chop.
+- A tuned sample that actually renders <= 2.500 s will no longer be asked to chop.
+- Pitch-down samples that render > 2.500 s are still correctly blocked/chopped.
+- If the byte-identical donor slot sizes fail but the physical 8-page layout fits, export falls back to the verified one-file C/D allocator instead of failing/splitting.
+- Main Rossum export remains one .sp12 file only.

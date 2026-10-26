@@ -1,0 +1,23 @@
+P-12 debug check — 2026-09-20
+
+Verified/fixed in this build:
+1. 32-bar JSON bloat regression fixed: project save now stores only the active/meaningful step range instead of all 512 reserved steps for every pad on every track/pattern. Hidden programmed hits beyond a temporarily shortened pattern length are still preserved.
+2. CHORDS stuck-note regression fixed: MIDI/VST note-off now follows whether that exact chord tone actually sent MIDI at note-on time, so changing CHORDS Output while holding a chord cannot suppress the matching note-off.
+3. Sequencer VST note-off target regression fixed: the VST insert targets used for Note On are captured and reused for Note Off, so changing/removing a mixer insert during the gate cannot redirect/drop the release.
+4. Long-sequence playhead follow: multi-bar sequences now scroll to each new bar during playback so the visible grid follows the playhead.
+5. SYSTEM VST diagnostics corrected: Electron bridge presence is no longer reported as a working native VST host. The panel queries getVSTHostStatus and distinguishes bridge-ready/native-host-missing from a fully available native host.
+
+Integrity checks:
+- 4/4 executable inline JavaScript blocks parse
+- main.js parses
+- preload.js parses
+- 335 HTML IDs / 335 unique / 0 duplicates
+- 0 missing literal getElementById/querySelector ID targets
+- 48 built-in insert definitions / 48 matching DSP handlers
+- SP12: 824,546-byte image, 26,040 Hz, 65,100-sample (~2.5 s) per-sound guard
+
+Known remaining dependency:
+- native/p12-vst-host.exe is not included. Scanning, VST2/VST3 assignment, project persistence, MIDI routing and editor commands are wired, but real VST DSP/editor hosting still requires the compiled native host.
+
+Known remaining audio-safety caveat:
+- Changing a MASTER insert effect TYPE still rebuilds the master insert graph with a speaker-side panic fade. The recording tap is not crossfaded, so changing master effect types during an active recording can capture a discontinuity. Bypass/parameter changes already use live ramps and do not require the hard graph rebuild.

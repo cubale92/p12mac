@@ -1,0 +1,20 @@
+P-12 — Rossum SP-1200 groove / Time Correct input-only fix
+================================================================
+- New sequencer grid hits snap to the current TC tick division (1/8 = 12 of 24 PPQN).
+- Existing imported hardware hits retain their raw exact ticks and hardware swing header.
+- A new grid hit on a clean Rossum import stays as a non-destructive micro-event overlay.
+  Adding a hit does NOT switch the whole sequence from hardware-event playback.
+- Both clean overlays and explicitly edited patterns use original Rossum header swing
+  at playback, instead of dropping the hardware shuffle when a grid edit occurs.
+- Native imports do not bake swing into newly live-recorded ticks (prevents double-swing).
+- On native .sp12 export, original event descriptors are preserved; new overlay pad
+  descriptors are generated correctly. Native header and length remain available.
+- TC grid visual reflow is deferred until Stop while playing, to avoid scheduler stalls.
+  The newly selected TC becomes effective immediately for any new input/recording.
+- Ordinary note entry updates one cell instead of rebuilding the whole grid live.
+
+Checks performed here: JS syntax, 1/8 tick snap, existing raw ticks and header swing,
+new overlays in hardware export, and native sampler regression tests.
+NOT VERIFIED here: listening on Windows, actual VST3 hosting, physical Rossum round-trip.
+Trimmed Playlist clips with clean native+micro overlays are STILL blocked on .sp12
+export rather than silently producing the wrong hardware result.

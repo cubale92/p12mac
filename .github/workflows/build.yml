@@ -1,0 +1,142 @@
+name: Build P12 Retro
+
+on:
+  workflow_dispatch:
+
+jobs:
+  source-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: P-12 source + integration tests
+        working-directory: app
+        run: |
+          for t in tests-full15-integrated.cjs tests-rossum-encoder-unchanged.cjs tests-native-host-realtime-source.cjs \
+                   tests-safety-layer-source.cjs tests-save-playback-snapshot.cjs tests-native-plan-compiler.cjs \
+                   tests-native-pad-controls.cjs tests-transport-controller.cjs tests-recovery-worker.cjs; do
+            echo "::group::$t"; node "$t"; echo "::endgroup::"
+          done
+      - name: Native engine tests (sampler, SP character, KNOCK)
+        working-directory: app/native-host
+        run: |
+          for t in tests-knock tests-sp-character tests-native tests-pad-controls; do
+            g++ -std=c++20 -O2 -UNDEBUG -I. "$t.cpp" -o "/tmp/$t" && "/tmp/$t"
+          done
+
+  windows:
+    needs: source-tests
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+      - name: Version
+        id: v
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then v="${GITHUB_REF#refs/tags/v}"; v="${v#.}"; echo "version=$v" >> "$GITHUB_OUTPUT"; else echo "version=1.0.0" >> "$GITHUB_OUTPUT"; fi
+      - name: Build plug-in, desktop app and installer
+        shell: pwsh
+        run: ./scripts/build-windows.ps1 -Version ${{ steps.v.outputs.version }} -SkipTests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p12-retro-windows-installer
+          path: installer/Output/*.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p12-retro-windows-vst3
+          path: plugin/build/P12Retro_artefacts/Release/VST3/
+
+  mac:
+    needs: source-tests
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Version
+        id: v
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then v="${GITHUB_REF#refs/tags/v}"; v="${v#.}"; echo "version=$v" >> "$GITHUB_OUTPUT"; else echo "version=1.0.0" >> "$GITHUB_OUTPUT"; fi
+      - name: Build VST3 + AU + Standalone + P-12 Desktop (Apple Silicon) and .pkg
+        env:
+          MAC_APP_SIGN_ID: ${{ secrets.MAC_APP_SIGN_ID }}
+          MAC_INSTALLER_SIGN_ID: ${{ secrets.MAC_INSTALLER_SIGN_ID }}
+        run: |
+          set +e
+          scripts/build-mac.sh ${{ steps.v.outputs.version }} 2>&1 | tee build-mac.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" != 0 ]; then
+            # Surface the real errors as annotations (readable without log access).
+            grep -E "error:|fatal error|BUILD FAILED|unbound variable|No such file|CMake Error|command not found" build-mac.log | head -25 | sed 's/^/::error::/'
+            tail -15 build-mac.log | sed 's/^/::error::tail: /'
+          fi
+          exit $status
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p12-retro-mac-installer
+          path: installer/Output/*.pkg
+
+  android:
+    needs: source-tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Android source integrity (FULL15 + recorded patches)
+        run: |
+          node tests/full15-integrity.cjs
+          (cd app/src/main/assets && node ../../../../tests/hfe-hardware-layout.cjs)
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.9' }
+      - name: Release keystore (if configured)
+        env:
+          P12_KEYSTORE_BASE64: ${{ secrets.P12_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$P12_KEYSTORE_BASE64" ]; then
+            echo "$P12_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/p12.jks"
+            echo "P12_KEYSTORE=$RUNNER_TEMP/p12.jks" >> "$GITHUB_ENV"
+          fi
+      - name: Build APK
+        env:
+          P12_KEYSTORE_PASSWORD: ${{ secrets.P12_KEYSTORE_PASSWORD }}
+          P12_KEY_ALIAS: ${{ secrets.P12_KEY_ALIAS }}
+          P12_KEY_PASSWORD: ${{ secrets.P12_KEY_PASSWORD }}
+        run: |
+          if [ -n "${P12_KEYSTORE:-}" ]; then
+            gradle --no-daemon :app:assembleRelease
+            cp app/build/outputs/apk/release/app-release.apk ../P12-Retro-Android.apk
+          else
+            gradle --no-daemon :app:assembleDebug
+            cp app/build/outputs/apk/debug/app-debug.apk ../P12-Retro-Android-debug.apk
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p12-retro-android
+          path: P12-Retro-Android*.apk
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, mac, android]
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: dist }
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/p12-retro-windows-installer/*.exe
+            dist/p12-retro-mac-installer/*.pkg
+            dist/p12-retro-android/*.apk

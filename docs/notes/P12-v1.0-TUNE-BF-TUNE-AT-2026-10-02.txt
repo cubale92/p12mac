@@ -1,0 +1,26 @@
+P-12 v1.0 — Tune BF / Tune AT
+
+Tune BF (knob above Tune AT)
+- Range: -48..+48 semitones.
+- Emulates changing source speed/pitch BEFORE sampling.
+- Positive Tune BF shortens the audio that must fit in an SP-1200/Rossum pad slot.
+- Rossum .sp12 export bakes Tune BF into the stored 12-bit/26.04 kHz sample audio.
+- SP12 2.5-second preflight/chop calculations use Tune BF, not Tune AT.
+
+Tune AT (knob below Tune BF)
+- Range: -7..+7 semitones, matching the classic SP tuning span (about +/- a fifth).
+- Applied AFTER the sample is stored, during pad/sequence playback.
+- P-12-authored Rossum sequence events write Tune AT into the native event parameter byte.
+- Imported Rossum native event pitch remains preserved and plays at its recorded pitch.
+
+Round-trip model
+- P-12 playback = source audio x Tune BF x Tune AT (+ native per-event pitch when imported).
+- Rossum export = stored sample audio contains Tune BF; sequence event contains Tune AT.
+- This allows a long modern source to be sped up before storage and tuned back down after storage,
+  reproducing the classic SP sampling trick without manually pre-processing the source file.
+
+Also retained from previous build:
+- native .sp12 sequencer round-trip foundation
+- real 24 PPQN triplet timing
+- P-12 tempo range 20..400 BPM
+- multi-disk HFE export

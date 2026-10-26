@@ -1,0 +1,8 @@
+P-12 Mixer-32 VST3 Integration
+
+- VST2/VST3 plug-ins appear in every Mixer-32 insert menu after Scan Plugins.
+- 4 insert slots per pad channel, 4 per sequencer track, and 4 on Master.
+- Choosing VST3: SCAN / SELECT opens the VST Host window for that mixer slot.
+- VST insert assignments persist in P-12 project JSON and are replayed to Electron after load.
+- Requires the Electron preload bridge for folder scan / host IPC.
+- Actual native VST DSP still requires native/p12-vst-host.exe.

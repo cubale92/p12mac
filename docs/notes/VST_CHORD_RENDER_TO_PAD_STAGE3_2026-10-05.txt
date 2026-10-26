@@ -1,0 +1,14 @@
+P-12 Windows — VST Instrument Chord -> Empty Pad / Stage 3 Beta
+
+1. Load a SOUND-GENERATING VST3 instrument into the VST HOST / CHORDS slot or into the selected Mixer Track insert slot. Effect-only plugins such as RX950 or Ozone cannot generate a chord from MIDI by themselves.
+2. Open PIANO ROLL. Draw notes or add a chord, choose the matching VST Target and VST Slot.
+3. Under Empty destination pad, select any empty pad (A1–D8).
+4. Click RENDER VST TO PAD. The host snapshots the selected instrument preset, creates a separate offline instance, sends the drawn MIDI notes, captures actual PCM, encodes stereo 16-bit WAV and returns it to P-12.
+5. The sample is committed only after WAV decoding succeeds and only if the original project and selected pad haven't changed. On failure or silence, the pad remains untouched. The temporary blank WAV is a reserved in-memory placeholder only and is NOT inserted into project or SP12 export.
+6. Save .p12 to retain the editable Piano Roll notes and the real sampled pad. .sp12 uses the unchanged existing sample encoder; exported sounds must satisfy SP-1200 slot/memory/length constraints.
+
+Limitations:
+* Unverified on Windows VST3 / Rossum hardware. Offline plugin instantiation and sound capture need real-world testing. Some licensed synths may refuse a second instance or offline/non-real-time rendering.
+* Render currently captures one 16-step piano-roll region with up to 2.5 seconds of release tail and a maximum 8 second clip. Longer pad sounds may require SP12 chops as with regular imported samples.
+* Requires a loaded and enabled VST instrument; effect-only plugins do not synthesize notes.
+* Live Native Audio playback/rendering code is unchanged except for one explicit offline rendering command in native-host.

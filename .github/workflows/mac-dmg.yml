@@ -1,0 +1,46 @@
+name: Build Mac DMG with VST3
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mac-dmg:
+    runs-on: macos-15
+    timeout-minutes: 120
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      CMAKE_BUILD_PARALLEL_LEVEL: '3'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check build tools and source
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = arm64
+          command -v cmake >/dev/null || brew install cmake
+          cd app
+          node tests-full15-integrated.cjs
+      - name: Build Apple Silicon apps and plugins
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/build-mac.sh 1.0.0 2>&1 | tee build-mac.log
+      - name: Create DMG containing app and VST3
+        run: bash scripts/package-mac-dmg.sh 1.0.0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P12-Retro-AppleSilicon-DMG-with-VST3
+          path: installer/Output/*AppleSilicon.dmg
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: P12-Mac-build-log
+          path: build-mac.log

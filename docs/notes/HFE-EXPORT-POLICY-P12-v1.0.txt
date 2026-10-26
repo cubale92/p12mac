@@ -1,0 +1,8 @@
+P-12 v1.0 HFE EXPORT POLICY
+
+- Each .hfe is a vintage SP-1200-compatible four-page disk (~10 seconds).
+- If the project fits one disk, P-12 exports one .hfe.
+- If the project exceeds one disk, P-12 automatically exports additional numbered .hfe disks.
+- For projects that fit the Rossum 20-second / eight-page memory, this normally means DISK_01 and DISK_02.
+- HFE files are intended for SP-1200 / MKSREC1-compatible workflows.
+- Release name remains P-12 v1.0 (package version 1.0.0).

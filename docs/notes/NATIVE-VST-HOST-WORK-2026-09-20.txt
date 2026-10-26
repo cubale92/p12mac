@@ -1,0 +1,78 @@
+P-12 NATIVE VST HOST WORK — 2026-09-20
+=====================================
+
+Added source project:
+  native-host/CMakeLists.txt
+  native-host/CMakePresets.json
+  native-host/src/main.cpp
+  native-host/README.md
+  native-host/AUDIO-BRIDGE-NEXT.md
+
+Added build helper:
+  build-native-host.bat
+
+Electron bridge changes:
+  - Native host commands now use request/reply IDs for load, mixer insert,
+    editor open/close, state get/set and host status.
+  - P-12 receives real host failures instead of every command appearing queued.
+  - MIDI remains fire-and-forget to keep control latency low.
+  - stdout is parsed as the host JSON reply channel and stderr remains logging.
+  - Pending requests are failed cleanly if the native host exits/crashes.
+
+Native host commands implemented in source:
+  ping / status
+  loadVST3
+  loadVST2 (compile-time optional)
+  setMixerInsertVST
+  openEditor
+  closeEditor
+  midi
+  allNotesOff
+  getPluginState
+  setPluginState
+
+Native host runtime:
+  - JUCE 9.0.2 CMake project.
+  - Default Windows audio output via JUCE AudioDeviceManager.
+  - Hosted VST instruments receive P-12 MIDI and render native audio.
+  - Four VST Host slots plus Mixer-32 keyed instances.
+  - Native plug-in editor windows.
+  - Mixer-32 VST plug-in state is captured into project JSON when the native host is available and restored after insert re-instantiation on project load.
+
+Packaging fix:
+  - native/ is now an electron-builder extraResource rather than being trapped
+    inside app.asar. The compiled executable will be installed at:
+      resources/native/p12-vst-host.exe
+    which matches main.js discovery logic.
+
+VST2 note:
+  - VST2 source support is optional/off by default.
+  - A legally obtained legacy VST2 SDK is required to compile that path.
+
+Remaining native DSP bridge work:
+  - VST instruments are renderable by the native host.
+  - Existing P-12 Web Audio pad/track/master PCM is not yet fed into native
+    VST effect inserts. AUDIO-BRIDGE-NEXT.md specifies the shared-memory /
+    AudioWorklet bridge needed for that stage. JSON/Electron IPC is deliberately
+    not used for PCM because it is not real-time safe.
+
+Validation completed in this run:
+  - main.js parses with Node.
+  - preload.js parses with Node.
+  - package.json and CMakePresets.json parse as JSON.
+  - P-12.html: 5/5 inline scripts parse.
+  - P-12.html: 338 IDs, 338 unique, zero duplicates.
+  - 226 literal getElementById targets, zero missing.
+  - Native C++ delimiter/static structure check passes.
+  - Full Windows compile could not be run in the Linux execution environment;
+    user will perform the Windows MSVC build later.
+
+Additional integration completed:
+  - CHORDS now sends native VST MIDI not only to standalone VST HOST slots,
+    but also to VST inserts on the selected Source Pad and any track assigned
+    to that same pad.
+  - CHORDS captures exact VST targets per held note so Note Off cannot be
+    redirected by an insert change during the chord.
+  - CHORDS panic/all-off also sends a native allNotesOff command.
+  - Mixer-32 VST plug-in state is included in project save/load when native
+    state APIs are available.

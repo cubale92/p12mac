@@ -1,0 +1,29 @@
+P-12 v1.0 — PLOK Auto Correct 1/8 + beep/bip fix
+
+Corrections:
+- P-12 Time Correct is the UI equivalent of SP-1200 AUTO CORRECT.
+- The supplied PLOK project uses AUTO CORRECT 1/8 on the hardware.
+- P-12 no longer infers PLOK's Auto Correct from event spacing.
+- Imported PLOK/Rossum patterns now show Time Correct 1/8 while retaining
+  their native 24-PPQN event timing and imported Swing value.
+
+Beep/bip:
+- Loading .sp12 now forcibly clears P-12 metronome and count-in state.
+- Any already-scheduled click bus is muted at import time.
+- The click gain is restored only when the user intentionally enables
+  metronome or count-in again.
+
+Preserved:
+- Swing playback for native Rossum events
+- PLOK pitch import correction
+- Tune AT pitch correction
+- SP Decay full sample-length correction
+- SP Tune sample routing correction
+- Audio Device safe default-output behavior
+- direct BPM entry
+- Rossum mix/song support
+
+Validation:
+- active HTML entry files are byte-identical
+- all inline JavaScript passes node --check
+- ZIP integrity passes

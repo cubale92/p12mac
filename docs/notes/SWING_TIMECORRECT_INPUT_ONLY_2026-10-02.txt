@@ -1,0 +1,14 @@
+P-12 — Swing / Time Correct input-only timing update
+2026-10-02
+
+Confirmed behavior:
+- Existing/imported event ticks never move when Swing changes.
+- Existing/imported event ticks never move when Time Correct changes.
+- Playback reads stored ticks directly; no live swing or Time Correct offset is applied.
+- Swing and Time Correct are applied once, when a new live-recorded event is placed.
+- Time Correct now includes Off. Off records to the nearest native 24-PPQN tick without grid quantization.
+- Imported .sp12 patterns still initialize the P-12 Swing control to 50%.
+- Native Rossum event ticks remain authoritative.
+- New P-12 micro-events can play as overlays on untouched Rossum imports without re-timing the imported beat.
+- Triplet micro-events suppress their rounded 16th-grid proxy across the whole pattern, avoiding duplicate hits in a later scheduler slice.
+- Rossum Tune AT, signed pitch, Multi-Pitch, Multi-Level and Tune BF behavior are unchanged.

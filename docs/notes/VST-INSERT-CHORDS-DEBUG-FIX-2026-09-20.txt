@@ -1,0 +1,14 @@
+P-12 VST INSERT / CHORDS DEBUG FIX — 2026-09-20
+
+Fixed:
+- Mixer CHANGE no longer changes the visible plug-in name before the native replacement succeeds.
+- If a replacement fails, the previous VST remains selected and its UI name remains correct.
+- Successful Mixer LOAD / OPEN now opens the exact newly loaded insert instance.
+- Native openEditor rejects stale path mismatches instead of silently opening the old plug-in.
+- Added GENERIC editor buttons for Mixer inserts and CHORDS as a fallback for troublesome manufacturer GUIs.
+- VST browser pending targets are cleared when changing contexts or closing the browser, preventing Mixer/CHORDS cross-routing.
+- CHORDS successful assignment closes the browser cleanly.
+- Fixed a cross-script scope regression: CHORDS/VST code no longer reaches into private Mixer variables; it now uses explicit live bridge functions for Mixer assignment, plug-in list refresh, and source-pad/track VST routing.
+- Native host version bumped to 0.3.0.
+
+Rebuild native\p12-vst-host.exe after replacing these files.

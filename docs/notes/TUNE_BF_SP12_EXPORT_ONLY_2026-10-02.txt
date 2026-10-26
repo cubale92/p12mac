@@ -1,0 +1,17 @@
+P-12 — Tune BF .sp12 export-only correction
+2026-10-02
+
+Confirmed behavior:
+- Tune BF does NOT change normal P-12 playback.
+- Tune BF does NOT retune an already-ringing P-12 voice.
+- Tune BF does NOT affect chord-pad playback.
+- Tune BF does NOT participate in HFE export.
+- Tune BF IS baked into Rossum .sp12 sample audio during .sp12 export/preflight/chop.
+- Tune AT remains the live/post-sample tuning control.
+- Imported Rossum native event Tune/Multi-Pitch remains additive to Tune AT.
+- Swing/Time Correct input-only behavior from the confirmed build is preserved.
+
+Implementation notes:
+- playbackRateFor() now ignores tuneBefore.
+- playSample()/live tune/chord playback ignore tuneBefore.
+- Rossum renderer accepts applyTuneBF; .sp12 uses true, HFE uses false.

@@ -1,0 +1,12 @@
+P-12 Native Desktop Migration — Stage 1 (Windows source)
+
+- Packaged Electron launches native JUCE audio automatically; a failed/unavailable native host falls back to Web Audio without preventing playback.
+- The NATIVE AUDIO switch serves as a persistent emergency fallback preference.
+- SP12 and P12 project imports clear previous native pad assignments and resync all new samples.
+- The sampler holds old sample allocations for callback pointer safety until host restart; do not interpret this stage as memory reclamation.
+- Legacy PCM VST is still present for comparison but is not the default audio engine.
+- SP1200 .sp12/.hfe export and audio quantization were not modified.
+
+Not yet migrated: sequencer's source-of-truth scheduling from JS into C++, all offline DSP and browser-only sample-edit preview, native-first macOS/Android launchers, and plugin delay compensation.
+
+Windows/JUCE/Ozone/Focusrite runtime tests required before removing fallback.

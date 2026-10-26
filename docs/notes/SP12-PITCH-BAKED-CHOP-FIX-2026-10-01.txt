@@ -1,0 +1,15 @@
+P-12 Windows - Rossum SP12 Pitch-Baked Chop Fix
+2026-10-01
+
+FIXED
+- Extract -> Rossum -> Chop now opens the waveform AFTER the pad's current Tune/pitch is baked.
+- Speed-Warp is baked before Chop.
+- Preserve-pitch Warp uses its rendered buffer before Tune is baked.
+- Reverse is baked before Chop.
+- Chop preview therefore sounds like the sample that will be written to Rossum.
+- Slice count and the 2.5-second limit use the baked/tuned duration.
+- APPLY FOR SP12 commits the baked buffer to the destination pads and resets Tune/Reverse/Warp on those pads to neutral, preventing double-pitching during final .sp12 export.
+- Final .sp12 export and the Chop preflight now share the same rendering helper.
+
+Example:
+A 4.0-second sample at +12 semitones becomes about 2.0 seconds before the Rossum Chop screen is evaluated.

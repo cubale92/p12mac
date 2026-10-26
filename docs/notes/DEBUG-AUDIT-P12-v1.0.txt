@@ -1,0 +1,34 @@
+P-12 v1.0 FINAL DEBUG AUDIT
+=============================
+
+Checks passed: 15/15
+
+[PASS] main.js JavaScript syntax: PASS
+[PASS] preload.js JavaScript syntax: PASS
+[PASS] Inline JavaScript syntax: 5 executable inline blocks parsed; failures=0
+[PASS] HTML ID uniqueness: 358 IDs / 358 unique / 0 duplicates
+[PASS] Literal DOM ID targets: 231 literal targets / 0 missing
+[PASS] Release version: package=1.0.0 productName=P-12 v1.0
+[PASS] Installer artifact name: P-12-v1.0-${arch}.${ext}
+[PASS] Electron main target: main.js
+[PASS] Electron HTML target: main.js -> P-12.html
+[PASS] SP1200_HFE_BASE_B64 integrity: 2540544 bytes sha256=7bbbfa48244258b88aa72900e76b5e76c6d6302f5e84f350f68458a57311866d
+[PASS] SP1200_HFE_RAW_BASE_B64 integrity: 573440 bytes sha256=c1e96dfd8b7193b423ae5d6c23f74da2e21f68ed4d92a5ca01fa374fcfe7378f
+[PASS] HFE single-disk v1.0 policy: single four-page HFE only; no active multi-disk export markers
+[PASS] HFE compatibility report text: updated
+[PASS] Visible v1.0 branding: title + topbar
+[PASS] Versioned HTML mirror: byte-identical
+
+HFE RELEASE POLICY
+- .hfe exports vintage SP-1200-compatible disk images; over ~10 seconds it automatically creates additional numbered HFE disks for SP-1200 / MKSREC1 workflows.
+- Capacity is four 64K sound pages (~10 seconds); no 2/3-disk automatic split.
+- Rossum projects needing the expanded eight-page / ~20-second memory should use .sp12.
+- Existing deterministic Rossum .sp12 mono / 26.04 kHz / 12-bit rendering path was not replaced by the v1.0 HFE cleanup.
+
+KNOWN EXTERNAL/BUILD DEPENDENCIES
+- Native VST host binary bundled now: NO. Source/build scripts are included; VST DSP/editor hosting requires building native\p12-vst-host.exe on Windows.
+- The HTML still references Google Fonts and cdnjs JSZip. Core sampler/HFE/.sp12 logic is embedded; ZIP convenience features retain their existing fallback behavior when JSZip is unavailable.
+- A full Windows Electron/NSIS runtime build was not executed in this Linux container because node_modules/Electron and the Windows native host binary are not bundled in the source package.
+
+STATUS
+Static release audit passed.

@@ -1,0 +1,22 @@
+P-12 FULL15 - PAD LAYOUT / MUTE SYNC - 2026-10-10
+
+Extract into a fresh folder. On Windows rebuild with BUILD_FULL15_ORIGINAL_GUI.cmd.
+This ZIP contains complete source and build scripts, not a newly compiled Windows executable.
+
+The original faceplate and controls are retained. Pads now span the full main-page width;
+the SSL-style bus and other master FX sit below them beside the main-page mixer.
+The page tool dock no longer steals width from the faceplate. All eight enlarged pads
+are visible at 1536px width; smaller windows retain pad-row horizontal scrolling.
+
+Main-page Pad Mute and Track Mute now publish their current state to the detached
+Mixer32 window and update native gain immediately. Mixer32 changes still update the
+main-page mute controls. Recovery is marked dirty only; no live recovery write added.
+
+Verified: actual Chromium main/detached windows, all eight pad bounds and SSL position,
+bidirectional pad/Track 4 mute and native gains, pad response, Mixer32 scrolling at
+1700x980 / 900x650 / 700x450, transport/inserts browser regression, integrated preflight.
+The protected Rossum .sp12 export encoder remains unchanged.
+
+Includes all prior native insert, transport, HFE and larger-pad fixes, plus
+FORESTKKO_HFE_TEST/DSKA0000.HFE from the previous package. Physical hardware and
+Windows commercial VST editor tests still require the Windows build.

@@ -1,0 +1,11 @@
+P-12 v1.0 - Pad Insert Bake for SP-1200 Export
+Date: 2026-10-03
+
+Change only:
+- Active native P-12 PAD inserts are rendered into that pad's audio for .sp12 / HFE export.
+- Intended for effects such as Auto Wah, Filter, EQ, distortion, modulation, delay/reverb, etc.
+- Tune BF remains export-only and is baked into exported sample audio.
+- Tune AT / Multi-Pitch / Multi-Level remain event/playback-side and are not baked as insert processing.
+- Track inserts and master inserts are not baked into individual pad samples.
+
+Everything else in the previous working build is preserved.

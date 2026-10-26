@@ -1,0 +1,85 @@
+P-12 FULL15 — October 7 transport / Mixer-32 / Ozone resource fixes
+
+Base: P12_FULL15_SEQUENCER_STALL_MIXER_WINDOW_FIX_2026-10-07.zip
+
+Extract into a NEW folder. Run BUILD_FULL15_ORIGINAL_GUI.cmd on Windows.
+That script checks the package and rebuilds the JUCE/VST3 host, installer and
+portable application. This ZIP contains updated sources/build tools, not a
+precompiled Windows installer. Do not reuse an older p12-vst-host.exe.
+
+Changes
+- Original FULL15 HTML/Electron GUI and JUCE/VST3 architecture retained.
+- Mixer-32 now opens via a dedicated resizable Electron BrowserWindow.
+  Original strips/controls are mirrored through bounded state/action IPC;
+  the main project remains the sole owner. Strips are 200px wide and insert
+  selectors use readable 13px text and taller rows. Scrolling and zoom stay
+  inside the detached window; faders, knobs, inserts and native meters work
+  through their original handlers. Built-in insert editors open on the main
+  window; native VST editors remain native windows.
+- Electron transport controller serializes requests, shares simultaneous
+  duplicates and suppresses already-acknowledged redundant commands.
+- Backend enable is idempotent: assigning a VST when native audio is already
+  enabled no longer performs a stop/restart handoff.
+- Repeated Play from Mixer/Piano/Song means ensure playing; use Stop then Play
+  to restart from step one. UI refreshes send no transport commands.
+- Native callback consumes an immutable pattern/song event plan, loops it on
+  the device clock and dispatches sampler and hosted MIDI events at sample
+  offsets. Renderer lookahead is used only by the browser Web Audio fallback.
+  Renderer status polling updates the playhead, never schedules native notes.
+- Stored micro-event ticks, triplets, Rossum swing/pitch, proxy suppression,
+  clip ranges and different song tempos remain in the compiled event plan.
+- Pattern selection takes effect at a native loop boundary. Ordinary edits
+  adopt a revised plan on a callback boundary while preserving phase, with
+  no START/reset. Buffer suspension resumes the existing cursor.
+- Playback metronome clicks are native. Count-in keeps the original click
+  bus gate. External Web MIDI uses future timestamped output messages; it
+  still depends on renderer availability for refilling that external queue.
+- Recovery serialization/rotation/writes run in a worker after stopped/idle
+  checks. START waits for an existing recovery write; pending START prevents
+  another write. Playback/count-in defer recovery and view-state persistence.
+- Native host runs from a writable private runtime. Plugin resource lookup
+  registers vendor DLL directories and searches plugin/vendor resources.
+  For Ozone only, a discovered Ozone-owned icudtl.dat is placed beside the
+  runtime host, matching the location probed in the supplied log. No Electron
+  ICU data or unrelated plugin ICU is substituted. Missing/broken vendor
+  files still require a complete working Ozone installation.
+
+Rossum protection
+The original October 7 source from the Rossum codec/export marker through
+EOF is byte-identical (SHA-256 below), including .sp12/.s12 and HFE paths.
+8e0edfc6399392413c857ba67337ae537fdf92fc0c915b3f8e373a3756e93c9b
+Mono fold-down -> deterministic Blackman/sinc 26,040 Hz -> tiny DC removal
+-> true 12-bit quantization remains intact. SP character remains playback-only.
+
+Validation performed here
+- FULL15 integrated preflight, including existing source regressions: PASS.
+- 100 duplicate STARTs, redundant synchronization, ordered STOP/START,
+  transport host invalidation and recovery barrier tests: PASS.
+- Actual renderer compiler tested for normal grid, exact triplet tick16,
+  proxy suppression, Rossum 67% swing and signed pitch, muted routing,
+  mixed-tempo song and project-state restoration: PASS.
+- Dedicated Electron window handler tested with a BrowserWindow double:
+  resizable single child, sender isolation, original knob callbacks: PASS.
+- Real recovery worker writes and three-version rotation: PASS.
+- Compiled C++ sampler/routing/SRC/choke/offset tests: PASS.
+- Compiled C++ playback-only SP character isolation test: PASS.
+- Compiled native sequence clock: five seconds WITHOUT renderer/IPC calls,
+  <=1 sample timing error, stop, boundary swap, phase-preserving edit and
+  start deadline: PASS.
+- Protected exporter SHA-256 check: PASS.
+
+Still requiring Windows verification
+Full JUCE/VST3 host compilation, actual Electron visual/runtime testing,
+Windows audio-device stress, and the installed Ozone 12 editor were not run
+in this environment. The clock test is a deterministic C++ test, not a
+physical audio-device measurement. No physical Rossum hardware test yet.
+
+First Windows check
+1. Build with BUILD_FULL15_ORIGINAL_GUI.cmd and launch the new application.
+2. Load your Project.p12 and play the problem sequence.
+3. Open/resize Mixer-32, change a fader/insert, open Piano/Song, and verify that
+   the pattern keeps playing without resetting. Repeated Play must not reset.
+4. Open Ozone's editor and check its platform/ICU error. Missing vendor ICU
+   is now identified in the PLUGIN RESOURCES diagnostic line.
+5. Stop, allow two seconds for deferred recovery, then restart.
+6. Check P12_AUDIO_DEBUG.log, P12_DIAGNOSTICS.log and P12_ELECTRON.log.

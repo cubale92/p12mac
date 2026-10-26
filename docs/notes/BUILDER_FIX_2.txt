@@ -1,0 +1,8 @@
+P-12 Native Host Builder - Fix 2
+
+Fixed a PowerShell scalar-array bug in Visual Studio discovery.
+When only one vswhere.exe path existed, the previous script used [0] on a
+string and accidentally tried to execute "C" instead of the full path.
+
+Run BUILD_P12_VST_HOST.cmd again. The window stays open and logs to
+P12_NATIVE_BUILD.log.

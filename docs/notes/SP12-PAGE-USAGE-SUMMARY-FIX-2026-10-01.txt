@@ -1,0 +1,19 @@
+P-12 v1.1.11 Rossum SP12 page-usage summary fix
+
+Cross-file audit used: 9.sp12, RODE _.sp12, PLOK _.sp12, PLOKseq/no-seq, ROSSUM_TEST, RODE 440 Hz safe test, older P12 SET exports, the 4-drum project/export, and piano project/export.
+
+Finding: every real/older consistent image stores the per-page high-water sample count in eight 16-bit header words. pianonew.sp12 had new allocation/directory records but retained PLOK's old page-used values.
+
+Offsets by RAM page:
+  page 0: 0x9258
+  page 1: 0x925A
+  page 2: 0x9254
+  page 3: 0x9256
+  page 4: 0x9110
+  page 5: 0x9112
+  page 6: 0x925C
+  page 7: 0x925E
+
+v1.1.11 recomputes these words from the active 0x91D4 allocation table after every corrected one-file export and verifies them before download.
+
+The unproven forced INIT DK/TUNE=16 change from v1.1.10 was reverted; the real blank-slot low-byte pattern is preserved again.

@@ -1,0 +1,49 @@
+P-12 v1.0 — ROSSUM SP-1200 MIX / SONG / TUNE ROUND-TRIP AUDIT — 2026-10-02
+
+This build continues the existing P-12 v1.0 line. It does not replace the project with a new design.
+
+DONE IN THIS PASS
+- Rossum stored Mix 1-8 table is decoded from the native firmware-compatible 8 x 32-byte table.
+- Mix byte is treated losslessly as: output channel bits 0-2, level bits 3-6, Tune-vs-Decay bit 7.
+- All 5,632 stored-mix bytes across the supplied 22-file Rossum corpus decode -> encode byte-identically.
+- SP MIX selector + SELECT (Setup 16 behavior) + STORE (Setup 15 behavior) added to the P-12 mixer.
+- Selecting a stored mix restores per-pad level, output channel, and Tune-vs-Decay mode.
+- Undefined Rossum mix slots (all FF) remain undefined; a fresh P-12 project creates Mix 1 and leaves Mix 2-8 undefined.
+- Song D5..DC Select-Mix commands are decoded and applied at the correct sequence boundary during P-12 song playback.
+- P-12 song steps remember the selected SP Mix. The exported Rossum song emits a Select-Mix token only when the mix changes.
+- Mixer song display shows mix locks as e.g. 01[M1] -> 02[M2].
+- SP output assignment 1-8 is editable in both mixer views and is used as a hardware-style choke group.
+- SP Tune/Decay mode is editable in both mixer views.
+- SP Decay amount is editable in both mixer views and is written as the per-hit native sequencer parameter when the pad is DECAYED.
+- Imported native per-hit parameter bytes remain authoritative. P-12 no longer adds Tune AT on top of an imported event pitch (fixes double-pitch behavior).
+- When auditioning an imported pad, P-12 infers a useful Tune AT / Decay value from that pad's most common recorded native event parameter. Exact sequence playback still uses each event's own stored value.
+- Tune BF remains pre-sample and is baked into Rossum sample audio; Tune AT remains post-sample / sequencer state.
+
+ALREADY KEPT FROM THE CURRENT P-12 v1.0 LINE
+- One-file Rossum .sp12 project export target.
+- Native Rossum segment event timing and sub-step playback at 24 PPQN.
+- True triplet grids: 1/4T, 1/8T, 1/16T, 1/32T.
+- P-12 tempo range 20.0-400.0 BPM.
+- Native sequence import shows hits in the P-12 sequencer while retaining exact hardware tick positions.
+- Rossum song tempo import.
+- Multi-disk vintage SP-1200 / MKSREC1 HFE export when the project exceeds one ~10 s disk.
+- Rossum ~20 s .sp12 sample-memory path.
+- 2.5 s per-sound hardware fit preflight plus Tune BF workaround for longer modern source samples.
+- Existing SP12 deterministic mono 26.04 kHz / 12-bit audio path and page allocator fixes.
+- Existing sample names, chop workflow, save/load, VST/mixer work, and P-12 v1.0 branding remain in place.
+
+ROSSUM FORMAT FACTS USED
+- Firmware 1.04 Define Mix copies byte 0 of each 10-byte live sound-state record into the selected 32-byte mix snapshot at RAM 7094.
+- Select Mix copies those 32 bytes back into the live sound-state records.
+- Firmware channel assignment edits bits 0-2 of that byte.
+- Setup 18 Tune/Decay toggles bit 7 of that byte.
+- The remaining bits 3-6 are the stored mix-level field.
+- Pitch/Decay fader AMOUNTS used by recorded hits are carried by native sequencer event parameter bytes; they are not additional bytes inside the 32-byte stored mix snapshot.
+
+VALIDATION
+- All inline JavaScript blocks pass node --check.
+- Stored-mix bitfield decode/encode passed byte-identical round-trip over 22 supplied .sp12 files / 5,632 mix bytes.
+- Existing sequence corpus codec behavior is retained.
+- ZIP integrity checked after packaging.
+
+No claim of physical Rossum hardware testing is made for this exact build; hardware verification still comes from loading the generated .sp12 on the user's Rossum.

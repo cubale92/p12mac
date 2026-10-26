@@ -1,0 +1,14 @@
+P-12 hardware import display + VST safe playback, 2026-10-04
+
+Validated on supplied JACKIE2.sp12 and JACKIELPF(2).sp12:
+- JACKIE2: 3 segments, 138 events in Bank A.
+- JACKIELPF(2): 2 segments, 154 events total. First active segment (SP segment 01) has B=61 and A=16 while the first sample-directory record is in C.
+- Fix: after importing segments choose the first active segment’s dominant bank (B in JACKIELPF), not the first sample bank. Reset view to Track 1, preserve ALL imported event data and hardware timing.
+
+VST no-native safeguards:
+- Old browser ScriptProcessor/JSON-IPC VST processing is disabled by default. Audio remains clean/dry when Native Audio is off.
+- Existing native VST callback path remains unchanged and requires Native Audio ON to hear inserts.
+- A warning is displayed when adding an insert while Native Audio is off.
+- DO NOT enable window.__p12AllowUnsafeLegacyVstPcm: this obsolete path is not real time safe.
+
+Unmodified: native-host C++, Rossum SP12 image export, mixer data, BF/AT, Ozone JUCE callback and signal path, and the fresh Windows installer output script.

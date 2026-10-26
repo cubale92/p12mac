@@ -1,0 +1,22 @@
+P-12 v1.0 — Main Mixer SP12 Bake + Rossum Return BF Fix
+2026-10-04
+
+1. Physical Rossum .sp12 return behavior
+   - Tune BF is reset to 0 on imported hardware-baked samples.
+   - Tune AT is preserved/inferred from Rossum project/event state (for example -3).
+   - New samples can still use Tune BF (for example +6) before SP12 export.
+
+2. Main-page mixer filter now survives SP12/HFE export
+   - LPF/HPF state, cutoff and resonance are baked into the exported pad audio.
+   - Resonance gain compensation matches P-12 live playback.
+   - Filter processing is placed after Mixer-32 pad inserts, matching the live chain.
+
+3. Mixer-32 and subchannel processing retained
+   - Native pad inserts continue to bake into SP12/HFE.
+   - Subchannel/track native processing continues to bake into SP12/HFE.
+   - External hosted VSTs are not offline-baked by the browser renderer.
+
+4. Hardware-safe SP12 path retained
+   - 26,040 Hz / 12-bit SP1200 render path unchanged.
+   - Five leading 0x800 trigger-silence samples retained.
+   - 32-pad imported round-trip allocator retained.

@@ -1,0 +1,19 @@
+P-12 ONE-CLICK START - ELECTRON FIRST-RUN FIX
+=============================================
+
+1. Keep your built native host at:
+     native\p12-vst-host.exe
+
+2. Double-click:
+     START_P12.cmd
+
+The launcher now uses `npx electron .` instead of checking for
+node_modules\electron\dist\electron.exe before launch.
+
+With current Electron releases, the Windows Electron binary may be downloaded
+on the first Electron run rather than during `npm install`. On the first launch,
+leave the green command window open while that download completes.
+
+If P-12 still does not open, send:
+  P12_START.log
+  P12_ELECTRON.log (if created)

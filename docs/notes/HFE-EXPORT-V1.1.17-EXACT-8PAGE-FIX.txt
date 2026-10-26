@@ -1,0 +1,12 @@
+P-12 v1.1.17 - SP-1200 HFE exact eight-page allocator fix
+2026-10-01
+
+Fixes v1.1.16 behavior where a <=20-second Rossum project could be exported as 3 HFE disks because the HFE splitter used a greedy page packer.
+
+Changes:
+- Uses exact largest-first backtracking across the Rossum's real 8 x 64K sound pages.
+- A project that physically fits the Rossum eight-page layout exports as at most 2 vintage HFE images (4 pages per HFE).
+- Never creates a fake third HFE disk because of greedy fragmentation.
+- Never silently trims audio for HFE export.
+- If the exact eight-page Rossum layout truly cannot contain the individual sound lengths, export stops with an exact physical-page error instead of creating disk 3.
+- Existing Rossum .sp12 audio pipeline remains untouched.

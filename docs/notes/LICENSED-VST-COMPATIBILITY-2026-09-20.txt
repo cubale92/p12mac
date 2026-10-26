@@ -1,0 +1,11 @@
+P-12 native host 0.4.0 compatibility pass
+
+Changes:
+- Windows OLE/COM initialization on the JUCE GUI/message thread for commercial plug-in editors, embedded login windows, drag/drop and shell integration.
+- Plug-in editor windows are no longer forced always-on-top, so vendor login/license dialogs can appear above them.
+- Stable native-host working directory (the folder containing p12-vst-host.exe).
+- Delayed editor re-focus after initial creation to accommodate editors that create child windows on the next message-loop turn.
+- Native editor creation exceptions are returned to Electron instead of silently appearing to do nothing.
+
+Licensing note:
+P-12 does not bypass or alter third-party licensing. Some vendors identify/authorize individual host executables. Rebuilding an unsigned p12-vst-host.exe changes its binary hash and can cause a vendor to ask for authorization again. Keep the compiled host at a stable path and avoid rebuilding it unless needed. Run P-12 normally (not as Administrator) unless a vendor explicitly requires otherwise.

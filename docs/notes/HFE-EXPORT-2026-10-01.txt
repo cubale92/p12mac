@@ -1,0 +1,11 @@
+P-12 SP-1200 HFE EXPORT v1.1.16
+
+FIX:
+- Removed the artificial eight-page fragmentation failure for HFE export.
+- Rossum projects <= ~20 s are no longer forced to be re-chopped just because sound lengths cannot fit exactly into eight 64K pages.
+- P-12 now packs intact sounds into as many 4-page vintage HFE images as required.
+- No sample trimming and no automatic audio chopping.
+- Existing Rossum .sp12 audio pipeline remains unchanged.
+
+FORMAT NOTE:
+Rossum has ~20 s / eight sound pages, while .HFE import is the vintage SP-1200 floppy-image format (four sound pages per HFE). A single HFE cannot represent the Rossum-only extra memory.

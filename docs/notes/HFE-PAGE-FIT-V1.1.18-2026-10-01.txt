@@ -1,0 +1,8 @@
+P-12 v1.1.18 - HFE Rossum page-fit consistency fix
+
+- Removes the HFE-only "within 20 s but cannot fit eight 64K pages" dead end.
+- HFE first tries exact lossless 4-page / 8-page packing.
+- If only page fragmentation prevents a lossless 8-page fit, HFE now uses the same page-tail auto-fit policy as the working Rossum .sp12 exporter.
+- HFE remains limited to at most two vintage disk images for a Rossum 20-second project.
+- No fake third HFE disk is produced.
+- Existing .sp12 audio/render path is unchanged.

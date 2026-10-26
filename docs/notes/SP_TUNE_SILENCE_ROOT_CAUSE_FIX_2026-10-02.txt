@@ -1,0 +1,33 @@
+P-12 v1.0 — SP TUNE silence root-cause fix
+
+Root cause:
+The Rossum Tune/Decay playback patch connected loaded sample BufferSource audio
+to the voice output only when the pad was in SP DECAY mode:
+
+  BufferSource -> Decay Gain -> Voice Out
+
+In SP TUNE mode effectiveDecay was null and there was no:
+  BufferSource -> Voice Out
+
+So the source was started correctly, the AudioContext was alive, and the
+audio-device configuration was not the cause — the loaded sample simply had
+no path to the speakers in SP TUNE mode.
+
+Fix:
+- SP DECAY: BufferSource -> decay envelope -> voice output
+- SP TUNE:  BufferSource -> voice output directly
+
+This also explains the observed behavior exactly: switching to SP DECAY made
+sound return, while SP TUNE stayed silent.
+
+Preserved:
+- Audio Device no-silence/default-output changes
+- Rossum SP12 mix/song work
+- Tune BF / Tune AT
+- direct BPM entry
+- triplet/sequencer changes
+
+Validation:
+- all active HTML entry files identical
+- all inline JavaScript blocks pass node --check
+- ZIP integrity passes

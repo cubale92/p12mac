@@ -1,0 +1,24 @@
+P-12 Native Audio routing / diagnostic update (2026-10-04)
+
+Verified from P12_AUDIO_DEBUG.log:
+- Buffer change request 512/1024: driver retained 480 frames but host reported ok.
+- Native callback diagnostics show no slow callbacks, lock misses, dry fallbacks or late events in the uploaded capture.
+- Processing count does not establish that individual Track inserts received audio.
+
+Changed:
+- Native sampler trigger routing follows pad -> subchannel-assigned track, not the source sequencer track when the pad is assigned to a subchannel.
+- Subchannel mute/level/pan are applied to new native triggers.
+- Buffer change rejects silently ignored driver sizes and reports actual device size.
+- Native mixer diagnostics now separate pad, track, master insert DSP block counts and report eight track-specific counters.
+- VST insert assignment successes/failures are recorded in P12_AUDIO_DEBUG.log.
+
+Limitations / next investigations:
+- Legacy IPC/ScriptProcessor VST path remains experimental and may crackle; Native Audio ON is recommended.
+- True shared subchannel DSP (filter and bus-level effects), automatic per-insert plug-in delay compensation, and real-time buffer-size support on drivers pinned to 480 frames are not yet implemented.
+- Full Windows/JUCE/VST3 build and plugin behavior must be tested on Windows; Linux tests do not validate Windows audio output.
+
+Reproduction test:
+1. Load a project with a pad assigned to SUB 1, and SUB 1 routed to Track 3.
+2. Assign a VST3 to Track 3 Insert 1 and play with Native Audio ON.
+3. Send P12_AUDIO_DEBUG.log. Inspect vst-insert-sync and native-health trackFxBlocks (array element 2 for Track 3).
+4. If 512/1024 does not apply, log now reports the actual hardware buffer.

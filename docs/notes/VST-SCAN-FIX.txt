@@ -1,0 +1,11 @@
+P-12 VST2 + VST3 LIVE DISK SCANNER
+
+- Recursively scans each selected folder.
+- Follows directory junctions/symlinks with realpath loop prevention.
+- Selecting a .vst3 or .vst bundle directly is supported.
+- Windows .dll files are returned as VST2/legacy candidates instead of ignored.
+- Linux .so VST2/legacy candidates are supported; macOS .vst bundles are supported.
+- Diagnostics report VST3 count, VST2/legacy count, directories, entries, links and filesystem errors per root.
+- Cache is replaced by each successful live scan.
+
+DLL/SO candidates still require native-host probing before they can be trusted as actual VST plug-ins.

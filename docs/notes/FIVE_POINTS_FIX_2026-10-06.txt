@@ -1,0 +1,11 @@
+P-12 FULL15 — five-point workflow follow-up — 2026-10-06
+
+Preserved: FULL15 original interface/faceplate, native JUCE/VST3 audio and DSP, Rossum SP-1200/HFE codecs and original hardware image. No GitHub involvement.
+
+1) Independent Piano Roll Edit grid: 1/4, 1/8, 1/8T, 1/16 (default), 1/16T, 1/32, 1/32T. Visual draw/edit grid is independent of Time Correct input recording; existing notes are not requantized. Main + detached windows stay synchronized.
+2) Real Chromium interaction checks: mouse click/one-cell draw, note-edge drag resize, live chord recognition via simulated Web MIDI, independent detached Edit grid with REC+PLAY, sequencer Ctrl-wheel zoom, Mixer-32 scroll/zoom and channel navigation. These are headless browser tests, NOT a Windows Electron or real-hardware measurement.
+3) Robust recording: held notes across loop boundaries are split safely, actual AudioContext clock duration retained at 24 PPQN, switching patterns finalizes notes on the original pattern without disarming record, stopping flushes exactly once, late Note Off ignored. Tests in tests-piano-recording-edge.cjs.
+4) Diagnostics: rate-limit/batch UI grid edits, log important grid/transport changes and errors without flooding logging during mouse edits/MIDI input, avoid audio-thread logging. Built-in diagnostics tests run with preflight.
+5) Regression: integrated JS/source checks gate the Windows builder. Portable native C++ routing and scheduled timing tests pass. Native DSP/VST3 and hardware export files are byte-identical to the prior FULL15 workflow ZIP; no physical Rossum, ASIO/VST3 Windows session, or Windows installer build occurred here.
+
+Windows build: BUILD_FULL15_ORIGINAL_GUI.cmd. Windows integration still requires running/observing the updated UI on user's PC. Chromium-only optional tests require Python Playwright and Chromium and are not prerequisites for the Windows build.

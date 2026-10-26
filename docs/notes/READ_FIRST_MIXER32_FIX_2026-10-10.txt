@@ -1,0 +1,46 @@
+P-12 FULL15 — Mixer 32 inserts and transport fix — 10 October 2026
+
+Extract to a fresh folder. Run BUILD_FULL15_ORIGINAL_GUI.cmd and allow it to
+finish. This update includes native engine changes: rebuilding Electron alone
+or copying only P-12.html will leave the old insert processor in place.
+After the complete build, launch with START_P12.cmd or use the new installer.
+The native host identifies itself as 0.5.2-native-mixer-inserts.
+
+Changes
+- Mixer 32 START/STOP send explicit transport intents to the main renderer.
+  Repeated Play does not restart a running beat. Stop cancels a pending start
+  while audio initialization or a recovery write is still completing.
+- Mixer rebuilds are generation checked. Old animation-frame builders retire;
+  detached snapshots publish after the complete rebuild. Controls keep stable
+  identities and actions during a rebuild wait for their replacement control.
+- Detached refreshes wait until click/selection handling has completed.
+- Native pad/track/master inserts now process all 48 original menu choices.
+  Previously several choices silently bypassed audio, while some filter/EQ
+  variants used unconfigured filters. Effect tails continue when voices end.
+- Native effects preserve history during parameter changes where possible.
+  Built-in processing is included in pad/track/master processed-block counters.
+- VST insert path resolution also accepts the saved slot path as a fallback.
+- Insert changes and mixer transport commands do not restage the pattern plan.
+  Large recovery snapshots remain restricted to stopped/idle operation.
+
+Preserved
+Original FULL15 faceplate, separate resizable Mixer 32, existing scrolling and
+pinned Master, Track 0 routes, true dB faders, native JUCE/VST3 hosting,
+independent 8 Levels buttons, project reset fixes, and the previous HFE fixes.
+The Rossum .sp12 encoder is unchanged, verified by its protected source hash.
+
+Validation performed here
+- Real Chromium detached-to-main event forwarding: refresh during mouse release,
+  repeated Play, Stop cancellation, pad and Track 4 insert selections reaching
+  native commands without plan restart, and saved VST path resolution.
+- C++ audio tests for all 48 built-in choices: audible processing, bypass,
+  finite output, no allocations during processing, and delay tails.
+- Native pad-control/master gain tests and integrated distribution preflight.
+- Mixer scrolling, pinned Master, resize and zoom at 1700x980, 900x650, 700x450;
+  all 50 faders; Track 0; independent 8 Levels; project replacement; meters.
+- Original HFE/SP12 reference and FORESTKKO sequence/routing round-trip tests.
+
+This ZIP contains source and Windows build scripts, not a newly compiled Windows
+EXE. Windows JUCE/VST3 execution, commercial plug-in editors and physical Rossum
+hardware playback cannot be verified in this Linux test environment. The Windows
+native build now runs the new insert audio tests before copying the host binary.

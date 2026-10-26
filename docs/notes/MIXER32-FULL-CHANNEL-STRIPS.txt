@@ -1,0 +1,35 @@
+P-12 MIXER-32 FULL CHANNEL STRIPS
+
+This build makes Mixer-32 use a consistent full channel-strip layout.
+
+MASTER + 32 PAD CHANNELS:
+- 4 insert slots with built-in FX and VST2/VST3 selection
+- VST GUI / CHANGE controls when a VST is loaded
+- Tune
+- Filter mode, Cutoff, Resonance
+- Reverb send
+- Crush
+- High / Mid / Low EQ
+- Mute / Solo
+- Reverse
+- Choke group
+- Pan
+- Spectrum / level meter
+- 0-150% channel fader
+
+8 TRACK CHANNELS:
+- same channel-strip width/layout
+- 4 insert slots with built-in FX and VST2/VST3 selection
+- VST GUI / CHANGE controls
+- High / Mid / Low EQ
+- pad-source assignment
+- Mute / Solo
+- Pan
+- Spectrum / level meter
+- 0-150% channel fader
+
+MASTER:
+- same-width strip
+- 4 insert slots with VST3
+- VST GUI / CHANGE controls
+- spectrum / meter / fader

@@ -1,0 +1,59 @@
+P-12 FULL15 — LIVE TIMING / OZONE RESOURCES — 2026-10-11
+
+Based on P12_FULL15_SSL_SPECTRUM_LIVE_UNMUTE_FIX_2026-10-10.
+Full original GUI and native JUCE/VST3 sources, with all previous fixes retained.
+SSL bus, real spectrum and live unmute are user-confirmed working.
+
+BUILD
+Extract into a NEW folder. Run BUILD_FULL15_ORIGINAL_GUI.cmd.
+This rebuilds the Electron app AND the native host. START_P12.cmd starts the
+source app after building; it does not compile the new native host by itself.
+Do not reuse a previous installed EXE/host and expect these changes to apply.
+Native host version: 0.5.4-native-live-timing-resources.
+Project saves remain Project.p12.
+
+FIXES
+- Immediate live pad hits/chokes no longer inherit negative Web Audio offsets
+  as past native deadlines. Future scheduled events retain their audio deadlines.
+- Live IPC queue latency is measured separately: liveNativeEvents and
+  liveNativeWorstQueueMs. Genuine late scheduled events remain counted.
+- STOP cancels remaining dense sequence dispatch inside the current callback.
+  STOP still flushes pending sampler events; later live hits remain playable.
+- Native meter response logging is suppressed on success. Failures still log.
+- One lifetime VST peak no longer causes repeated warning logs at meter frequency.
+  Changed audio counters/new peaks are rate limited; heartbeat remains available.
+- Four silent warm-up blocks run on the newly loaded private plugin before it
+  enters the live graph. Actual device block length is used, with cleared audio
+  and MIDI every block. This moves lazy first-process work off the callback;
+  arbitrary third-party plugins can still have later runtime overruns.
+- Duplicate in-flight editor requests share one native request.
+- Ozone 12 resource lookup searches version-specific vendor folders (including
+  suffixed product folders), Windows uninstall InstallLocation metadata and
+  bundle resources. Other Ozone versions and Electron's ICU are not borrowed.
+- Vendor DLL directories stay registered. Identified platform DLLs are loaded
+  by absolute path with their adjacent dependency directory available.
+- Ozone's own ICU is staged beside the writable host. Repeated editor openings
+  do not rewrite the same staged file while the editor may have it mapped.
+- If installed Ozone ICU/platform resources are unavailable, GUI opens the
+  JUCE parameter editor and explains the fallback in the existing VST status.
+  It cannot recreate absent proprietary vendor files.
+- Optional custom resource root: P12_OZONE_RESOURCE_DIR (only if needed for an
+  unusual Ozone installation). Normal vendor/installer discovery is automatic.
+
+VALIDATION
+FULL15 integrated preflight and renderer inline-script syntax passed.
+Live immediate/future timing, diagnostic flood and duplicate editor IPC passed.
+Native sampler, scheduled retriggers/chokes, sequence clock, pad controls,
+all 48 built-in inserts, SSL/spectrum, playback character and new live/resource
+regressions passed as compiled C++ tests.
+Resource fixture verifies Ozone 12 selection, Ozone 11 rejection and custom roots.
+Windows build requires the new native live/resource regression before packaging.
+
+Full Windows JUCE host compilation and commercial Ozone custom editor execution
+require Windows and the installed plugin; these were not run in this environment.
+Browser UI regression execution was unavailable because the Chromium download
+failed. Original GUI layout is retained; source/preflight checks passed.
+
+ROSSUM EXPORT
+Protected export encoder SHA-256 check passed. No .sp12 conversion/export encoder
+changes. Existing HFE test disk and import/export fixes are retained.

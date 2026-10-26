@@ -1,0 +1,33 @@
+P-12 NATIVE HOST BUILD TROUBLESHOOTING
+=======================================
+
+1. Extract the WHOLE ZIP to a normal folder such as:
+   C:\P12\
+   Do not run BUILD_P12_VST_HOST.cmd from inside the ZIP preview.
+
+2. Double-click BUILD_P12_VST_HOST.cmd.
+   This fixed version stays open on success or failure.
+
+3. If it fails, the complete log is:
+   P12_NATIVE_BUILD.log
+
+4. Required tools:
+   - Windows 10/11 x64
+   - Visual Studio 2022 Build Tools with "Desktop development with C++"
+   - CMake 3.24+
+   - Git
+
+5. The build downloads JUCE 9.0.2 from GitHub on first configure, so Internet access is required.
+
+6. Success creates:
+   native\p12-vst-host.exe
+
+7. Then run:
+   npm install
+   npm start
+
+IMPORTANT FIX IN THIS PACKAGE
+-----------------------------
+JUCE 9 requires C and C++ to be enabled by the parent CMake project. The earlier
+P-12 native-host CMakeLists enabled only C++, which can make JUCE configuration
+fail immediately. This package changes it to LANGUAGES C CXX.

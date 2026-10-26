@@ -1,0 +1,40 @@
+P-12 FULL15 workflow update — 2026-10-06
+
+Preserved:
+- Original FULL15 GUI/faceplate
+- Approved native audio/VST host integration
+- Rossum SP-1200 conversion/export code
+
+Mixer-32:
+- Pad strips, subchannels and track strips each have internal scrolling.
+- Individual channel strips can scroll vertically when controls exceed the available height.
+- Added TRACKS jump beside MASTER / PADS A / PADS D.
+- Mixer interior zoom remains independent from the main P-12 window.
+- Insert editor now scrolls when it exceeds the display height.
+
+Sequencer:
+- Existing mouse select/move/copy editing retained.
+- Ctrl/Cmd + mouse wheel: sequencer zoom.
+- Shift + mouse wheel: horizontal navigation.
+- Playhead now keeps itself in view when it leaves the visible area.
+
+Main Piano Roll:
+- New notes default to 1 visible grid cell instead of 4.
+- Draw length selector: 1,2,3,4,6,8,12,16 cells.
+- Draw length follows an independent Edit grid; Time Correct controls input quantization only. MIDI-recorded notes retain actual played duration.
+- Drag the gold right edge of a note to resize it.
+- Ctrl/Cmd + wheel zooms; Shift + wheel scrolls horizontally; normal wheel scrolls vertically.
+- Added PLAY / STOP / REC MIDI / REC+PLAY directly inside Piano Roll.
+- REC+PLAY arms MIDI and starts the authoritative main P-12 transport.
+- Added LIVE chord/note display with major/minor/7th/9th/sus/dim/aug recognition.
+
+Detached Piano Roll:
+- Same 1-cell default + adjustable draw length.
+- Added PLAY / STOP / MIDI REC / REC+PLAY controls using the same main transport.
+- Shift+wheel horizontal navigation retained with Ctrl/Alt zoom behavior.
+- Existing full note-edge resizing and live chord display retained.
+
+Testing:
+- tests-workflow-ui-source.cjs added.
+- tests-full15-integrated.cjs updated to run the workflow regression.
+- Existing FULL15 source/integration suites pass.

@@ -1,0 +1,18 @@
+P-12 — STRICT PER-NOTE TIME CORRECT FIX — 2026-10-05
+
+Rule implemented:
+- Time Correct is INPUT ONLY.
+- The selected TC is captured when a NEW note is created.
+- That note is written to its exact Rossum/SP-1200 24-PPQN tick.
+- Changing TC later never moves/requantizes any existing note.
+- Existing imported Rossum ticks remain authoritative.
+- Imported Rossum swing remains in the Rossum header/playback path; it is not rewritten when TC changes.
+- Newly created micro-events store inputGrid metadata (1/8, 1/16, 1/16T, etc.) for provenance; playback uses tick, not current TC.
+- Moving/copying existing notes preserves exact ticks and their inputGrid provenance; it does not re-snap them through the current TC.
+
+Expected example:
+1/8 note -> tick 12 remains tick 12.
+Switch to 1/16 -> new note can land tick 18; first note remains tick 12.
+Switch to 1/16T -> new note can land tick 20; earlier notes remain tick 12 / 18.
+
+Main file loaded by Electron: P-12.html

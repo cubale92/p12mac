@@ -1,0 +1,14 @@
+P-12 VST3/Ozone audio routing correction (experimental) — 2026-10-04
+
+ROOT CAUSE: The renderer encodes floating point PCM using standard browser btoa() Base64, while the native JUCE host previously used MemoryBlock::fromBase64Encoding/toBase64Encoding, which is a non-standard JUCE-specific 64-bit format. Every inbound PCM block was rejected with "Invalid stereo PCM payload" before reaching Ozone or other plugins. The output would also have been unreadable by browser atob().
+
+CHANGES:
+- Decode input using JUCE Base64::convertFromBase64 (standard RFC4648) into a MemoryOutputStream and validate buffer length.
+- Encode output using JUCE Base64::toBase64, matching renderer atob() exactly.
+- Preserve improved plug-in reuse (power toggle does not reload a heavy VST), native PCM IPC isolation from GUI editor creation, on-master-insert audio graph rewire, dry fallback when native unavailable, and a signal counter showing how many plug-ins processed PCM.
+
+BUILD: close all running P-12 and p12-vst-host.exe instances, extract the whole package to a NEW directory, then run BUILD_P12_WINDOWS_EXE.cmd on your Windows PC. Use the new installer from dist-installer/ and reinstall. Do NOT reuse the older compiled native/p12-vst-host.exe: it contains the incompatible Base64 code. Native C++ code must be rebuilt.
+
+DIAGNOSTICS: In renderer Developer Tools console, look for `P-12 VST PCM ACTIVE` along with processedPlugins > 0, inputPeak > 0. The Ozone input meter should move. If you see `ZERO PLUGINS PROCESSED`, identify the slot assignment and host configuration. If the editor is slow to open once, Ozone's disk scan, UI initialization, licensing may still take time. This ScriptProcessor -> Electron JSON -> native-host design is not appropriate for low latency realtime tracking, and this package is not yet validated with Ozone 12 on Windows hardware.
+
+NOT YET FIXED: A production-grade low-latency audio-thread bridge and complete subchannel VST effect support. Not a compiled .exe or tested Ozone install.

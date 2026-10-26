@@ -1,0 +1,10 @@
+P-12 Track Names + Sequence Length Visual Sync
+
+- 8 sequencer tracks can be renamed directly in the Track selector.
+- Names propagate to Mixer-32, Track Mute, Sample Edit/Chop and insert editor titles.
+- Track names persist in P-12 project JSON; older projects default to Track 1..Track 8.
+- Sequence Length now visibly expands the sequencer grid (16 steps per bar).
+- Example: 8 bars = 128 editable steps.
+- Strong bar-start markers and BAR/BEAT ruler remain aligned with the grid.
+- Added a live length summary and Bar Jump selector for long sequences.
+- Sequence scheduler continues to use the same per-pattern length value.

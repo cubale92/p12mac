@@ -1,0 +1,12 @@
+P-12 v1.0 — Rossum/SP-1200 .sp12 import Swing 50 lock
+
+Change:
+- Every imported .sp12 pattern opens with P-12 Swing = 50%.
+- The original Rossum segment swing percentage is retained only as
+  rossumSourceSwing diagnostic metadata and is not applied to playback.
+- Native rossumEvents tick positions remain untouched.
+- Tune AT, Multi-Pitch, Multi-Level and the signed -8..+7 tune decoder are unchanged.
+- PPQ, Time Correct and adaptive-grid code are unchanged.
+
+Reason:
+- P-12's swing scheduler must not re-swing already imported native Rossum event timing.

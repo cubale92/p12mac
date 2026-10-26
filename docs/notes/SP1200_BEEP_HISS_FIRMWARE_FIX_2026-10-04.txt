@@ -1,0 +1,15 @@
+P-12 / SP-1200 beep-hiss firmware-driven fix — 2026-10-04
+
+Scope: fresh P-12 -> Rossum .sp12 / HFE sound-memory exports.
+
+Changes:
+1. Replaced the built-in fresh-export donor with the user-confirmed working all-empty .sp12 image (1(2).sp12 / 2(2).sp12; both are byte-identical).
+2. Fresh exports preserve that donor's global hardware state instead of synthesizing stored Mix / live Mix / sequencer state.
+3. Each rendered active sample gets an exact four-sample 12-bit silence guard (0x800) at both the beginning and end after 26.04 kHz rendering and 12-bit conversion. Four samples = ~0.154 ms.
+4. Existing sample rate, 12-bit offset-binary mapping, packed 12-bit byte layout, allocator, directory, and page-used logic remain unchanged.
+5. Imported .sp12 round-trip mode is not changed by the clean-donor policy.
+
+Reasoning:
+- Real-hardware TRUNCATE testing showed the beep follows the sample end point; setting end to zero moves the beep to the pad trigger.
+- Empty pads can also beep, pointing to fresh-image global state as a separate contributor.
+- Rossum firmware v1.04 specifically fixed a truncation-start bug capable of producing clicks/noise in otherwise-empty sounds, so the guard protects the same boundary condition without altering the audible sample body.

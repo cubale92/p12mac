@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+    <title>P12 Retro @VERSION@</title>
+    <welcome file="welcome.html" mime-type="text/html"/>
+    <options customize="allow" require-scripts="false" hostArchitectures="arm64"/>
+    <domains enable_localSystem="true"/>
+    <choices-outline>
+        <line choice="vst3"/>
+        <line choice="au"/>
+        <line choice="app"/>
+        <!--DESKTOP-->
+    </choices-outline>
+    <choice id="vst3" title="P12 Retro VST3" description="Installs to /Library/Audio/Plug-Ins/VST3">
+        <pkg-ref id="com.p12.retro.vst3"/>
+    </choice>
+    <choice id="au" title="P12 Retro Audio Unit" description="For Logic Pro and GarageBand. Installs to /Library/Audio/Plug-Ins/Components">
+        <pkg-ref id="com.p12.retro.au"/>
+    </choice>
+    <choice id="app" title="P12 Retro Standalone" description="Installs P12 Retro.app to /Applications">
+        <pkg-ref id="com.p12.retro.app"/>
+    </choice>
+    <choice id="desktop" title="P-12 Desktop" description="The P-12 desktop app with detached Mixer-32, playlist and piano windows. Installs P-12 Desktop.app to /Applications">
+        <pkg-ref id="com.p12.retro.desktop"/>
+    </choice>
+    <pkg-ref id="com.p12.retro.desktop" version="@VERSION@">desktop.pkg</pkg-ref>
+    <pkg-ref id="com.p12.retro.vst3" version="@VERSION@">vst3.pkg</pkg-ref>
+    <pkg-ref id="com.p12.retro.au" version="@VERSION@">au.pkg</pkg-ref>
+    <pkg-ref id="com.p12.retro.app" version="@VERSION@">app.pkg</pkg-ref>
+</installer-gui-script>

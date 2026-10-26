@@ -1,0 +1,42 @@
+P-12 VST GUI / AUDIO / CHORDS FIX — 2026-09-20
+
+WHAT CHANGED
+
+1. VST GUI
+- The VST HOST button labelled LOAD / OPEN now actually performs both actions.
+- After a successful standalone VST2/VST3 load, P-12 sends openEditor for the exact native slot.
+- Native editor windows are explicitly promoted to visible/topmost foreground windows so the hidden child-process console cannot hide the first editor.
+- Mixer-32 VST GUI buttons continue to address the exact Pad/Track/Master + insert slot instance.
+
+2. NATIVE VST INSTRUMENT AUDIO
+- p12-vst-host explicitly enables all plug-in buses before prepareToPlay.
+- Standalone and targeted mixer VST instruments continue to be processed by the native Windows audio callback.
+- SYSTEM now has Native VST Output controls: refresh, select/use output, and TEST NATIVE AUDIO.
+- TEST NATIVE AUDIO generates a 440 Hz tone inside p12-vst-host.exe. If that tone is audible, the native Windows output path is confirmed independently of the plug-in.
+- Host diagnostics now report native audio device, MIDI message count and non-zero plug-in audio block count.
+
+3. CHORDS VST
+- CHORDS now has a dedicated VST Slot selector (1-4).
+- ADD / CHANGE VST opens the VST browser specifically for CHORDS.
+- Selecting LOAD / OPEN assigns the chosen VST2/VST3 instrument to that CHORDS slot and opens its GUI.
+- OPEN VST GUI reopens the selected CHORDS instrument editor.
+- CLEAR CHORDS VST unloads that standalone native slot.
+- CHORDS MIDI is sent directly to the selected native host slot rather than relying only on channel-wide broadcast.
+- Existing Source Pad and assigned Track Mixer-32 VST targets are still supported.
+- Note-off retains the exact target list captured at note-on.
+
+4. NATIVE HOST IPC
+New commands:
+- unloadVST
+- testTone
+- listAudioOutputs
+- setAudioOutput
+
+Native host version bumped to 0.2.0.
+Electron preload bridge bumped to p12-vst-bridge-6-gui-audio-chords.
+
+IMPORTANT
+The native host must be REBUILT after extracting this package because the editor/audio changes are C++ changes inside p12-vst-host.exe.
+
+VST INSTRUMENTS VS MIXER EFFECTS
+This revision makes native VST instruments audible through the native host output and fixes their MIDI/editor path. P-12's Web Audio Pad/Track/Master PCM is still not streamed through native VST effect inserts. A compressor/reverb/etc. used as a true Mixer-32 insert still needs the separate low-latency PCM bridge stage.

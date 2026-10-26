@@ -1,0 +1,25 @@
+P-12 — Windows VST Instrument + Piano Roll Fix (source beta, 2026-10-05)
+
+WHAT CHANGED
+- Native mixer-pad and mixer-track VST instruments receive queued MIDI and generate sound without an existing sample playing. Empty pad VSTs use default track 1; an active sample route avoids rendering the same pad instrument twice.
+- Instrument plugins with no input bus are processed as generators instead of skipped like regular audio effects. The legacy PCM path now also passes queued MIDI if the chain is being processed by an existing audio stream.
+- Piano Roll VST Target supports VST HOST/CHORDS, all 8 mixer tracks, master and 32 pads, with individual VST slots 1–4. Native mixer track indexes internally start at 0 (Mixer Track 1 = id 0): the previous diagnosis of an off-by-one mismatch was incorrect.
+- PLAY CHORD / PREVIEW VST checks that an enabled instrument and native audio output exist before sending notes. This gives an explicit error for wrong slot, disabled VST, effect-only plugin, or inactive device.
+- Main P-12 Play auditions the editable 16-step Piano Roll MIDI loop when "Play with sequencer" is checked. Playback/Stop releases the notes, without placing MIDI in a Rossum SP-1200 song export.
+- Render VST to Pad requires choosing A1–D8 FIRST, confirms the chosen pad, and if occupied asks explicitly before replacement. Only a successful real WAV render and decode changes pad sample data. The in-memory placeholder is not saved/exported.
+- Native status/log includes instrumentBlocks, instrumentMidiBlocks and instrumentAudibleBlocks, so a new P12_AUDIO_DEBUG log can distinguish no MIDI, no DSP and silent synth output.
+
+HOW TO USE
+1. Run BUILD_P12_WINDOWS_EXE.cmd in the extracted folder. The existing EBUSY resource-edit fallback is retained.
+2. Load a working VST3 INSTRUMENT (not an effect like Ozone/RX950) in VST HOST or a Mixer pad/track insert and enable it. Match Piano Roll target and slot exactly.
+3. In PIANO ROLL draw notes or + CHORD, click PLAY CHORD / PREVIEW VST, or toggle "Play with sequencer" and press main Play.
+4. Select the destination pad under "Render destination pad", click RENDER VST TO PAD and confirm. In case of failure the original sample/empty slot is preserved.
+5. For physical Rossum use the ordinary .sp12 extract after successful rendering. SP-1200 sample memory/duration limits still apply.
+
+VERIFICATION AND LIMITS
+- JavaScript checked with node --check (main.js, preload.js, every inline P-12.html script).
+- Standalone native sampler regression tests compiled/ran on Linux.
+- Windows Electron/JUCE/VST3 host cannot be built or actually auditioned in this Linux environment; real commercial VST3 and Rossum physical testing is still required. This ZIP contains BUILDABLE WINDOWS SOURCE, NOT AN .exe.
+- VST2 support still requires legally obtained SDK and optional host build flag; this does not fix vendor-specific VST3 scan/license/GUI failures such as the Arturia load errors from the older 2026-10-04 diagnostic log.
+- Standalone MIDI instrument output and Native Audio are the intended full-featured synth paths. Legacy Web Audio mode without existing sample streams cannot be guaranteed to clock empty-input mixer instruments; test Native Audio first.
+- Mixer 32 detachable window/scrolling/redesign and step multi-selection are NOT implemented here (as separately agreed, these wait for their own GO).

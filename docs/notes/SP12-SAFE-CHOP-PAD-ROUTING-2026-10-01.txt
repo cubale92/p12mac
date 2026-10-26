@@ -1,0 +1,14 @@
+P-12 Windows v1.1.2 - Rossum Safe Chop Pad Routing
+
+FIXED
+- Rossum Chop no longer blindly places slices on consecutive occupied pads.
+- Every SP12 slice now has its own target-pad selector (A1-D8).
+- AUTO FREE PADS starts at the chosen pad and skips loaded pads.
+- A loaded pad that is itself >2.5 seconds is protected and cannot be overwritten by another sample's chop.
+- After applying one chop, P-12 re-scans the project and automatically opens the next still-too-long pad for its own Rossum Chop pass.
+- Duplicate slice destinations are blocked.
+- Loaded but hardware-safe destination pads can still be chosen intentionally; P-12 asks for confirmation before replacing them.
+- Pitch/Tune/Speed-Warp remain baked before the Rossum Chop screen, as in v1.1.1.
+
+EXAMPLE
+If A7 and A8 are both too long, chopping A7 will keep A8 protected. AUTO FREE PADS can use A7 plus another free pad (for example B1). After A7 is committed, P-12 opens A8 for its own chop instead of losing it.

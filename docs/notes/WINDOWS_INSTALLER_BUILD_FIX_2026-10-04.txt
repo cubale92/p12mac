@@ -1,0 +1,11 @@
+P-12 Windows installer builder unblocking fix (2026-10-04)
+
+Fixed: BUILD_P12_VST_HOST.ps1 previously prompted for a keypress even when called inside BUILD_P12_WINDOWS_EXE.cmd. This prevented the parent builder from reaching npm install / electron-builder. Now the native build returns its success or error exit code immediately.
+
+To build the actual P-12 Windows installer, run BUILD_P12_WINDOWS_EXE.cmd, NOT BUILD_P12_VST_HOST.ps1.
+
+Native VST3 host output: native\p12-vst-host.exe (not the installer)
+Installer output: dist-installer\P-12-v1.0-x64.exe
+Portable app output: dist-portable\P-12-v1.0-x64.exe
+
+The Windows installers require npm/Electron downloads and a Windows build environment. The supplied archive is complete source and scripts; it does not contain precompiled installers. The VST bridge is experimental and has not been audio-tested against Ozone.

@@ -1,0 +1,41 @@
+P-12 WINDOWS — MIXER 32 TRANSPORT AND AUDIO DEBUG (2026-10-04)
+
+1. Mixer 32 now has START (restart pattern at step 1) and STOP at the end
+   of its scrollable window. These use the existing sequencer transport
+   functions and do not introduce an independent clock.
+
+2. LEGACY VST ON/OFF may be switched while P-12 is playing. Existing
+   ScriptProcessor nodes bypass immediately when OFF, and new pad/track
+   notes use Legacy VST when ON. Previously sounding notes may require
+   retriggering when turned ON. Legacy Web Audio / IPC is inherently
+   unreliable for heavy plugins (notably Ozone). Deadline misses trigger
+   automatic dry bypass rather than sustained crackling; this is an
+   emergency mitigation, not a replacement for a native real-time bridge.
+
+3. Native output buffer 512/1024 can be switched without MANUALLY stopping
+   the sequencer. Internally P-12 briefly suspends and resumes JUCE host
+   transport to reopen the audio device. The sequencer state, pattern,
+   beat and MIDI transport remain running. This MAY cause an audible gap,
+   pending event timing changes or tails lost at the device boundary.
+   Device/driver can reject requested sizes. A seamless switch is NOT
+   guaranteed; use while stopped for critical performances.
+
+4. Automatic audio debug log:
+      %APPDATA%\<Electron app name>\P12_AUDIO_DEBUG.log
+   The actual absolute path is displayed under the native audio controls.
+   Electron app data lives in the user's profile and is writable from
+   the packaged NSIS / portable application.
+   A new session delimiter is appended each run. Events include:
+   - native status counters, increments and worst callback timings
+   - VST DSP peak, costly blocks, dry fallbacks, late events and JS stalls
+   - Legacy VST ON/OFF, late/missing IPC blocks, fallback events
+   - native buffer changes, failures and host request timeouts
+   Async appender; no audio PCM contents and no disk I/O in JUCE callback.
+
+Preserved: JACKIELPF Rossum sequencer Bank B display mapping, SP-1200
+import/export, native engine processing algorithms, Ozone VST3 graph,
+existing icon, the randomized fresh installer output path fix.
+
+Static JS syntax checks and Linux sampler/scheduled-event tests passed.
+Windows Electron/JUCE builds and real Ozone playback remain UNVERIFIED.
+Build with BUILD_P12_WINDOWS_EXE.cmd on Windows in a fresh folder.

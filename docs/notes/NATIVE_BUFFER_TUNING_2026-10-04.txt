@@ -1,0 +1,28 @@
+P-12 Native Audio: optional playback stability tuning (2026-10-04)
+
+Preserves the existing native JUCE sampler, VST3 processing graph, Rossum .sp12
+reader/writer, sound quality, bank-selection fix, icon and Legacy VST option.
+No resampling, DSP, gain, Ozone, or export algorithms were modified.
+
+Changes:
+- Adds native output buffer control in the bottom-left Native Audio strip.
+  Stop playback before changing the buffer. 512 frames means less pad response
+  latency; 1024 frames gives heavy plugins such as Ozone more CPU headroom
+  and may reduce audio callback underruns, at the cost of higher latency.
+  The selection must be accepted by the active Windows audio driver.
+- Native-mode pad flashes and playhead drawing now share one lightweight
+  16 ms visual timer rather than spawning an independent timer for every
+  scheduled note/step. This reduces renderer timer work without changing
+  the timing or sound of the queued native hits.
+- Cleanly discards stale visual events and clears the queue on Stop/Restart.
+- Unmodified Normal/Legacy Audio step scheduling behavior.
+
+IMPORTANT: This is an incremental timing optimization, not a wholesale rewrite
+of the browser/IPC native-note scheduler. Live Windows playback with Ozone
+has not been verified here. Keep the previously working package as backup.
+
+Test with Native Audio ON, 512 frames initially. If slow callbacks/underruns
+persist with Ozone, STOP playback and try 1024. Note that a larger buffer adds
+latency; revert to 512 if response feels sluggish and diagnostics permit.
+
+Windows build: BUILD_P12_WINDOWS_EXE.cmd (the fresh-output installer script).

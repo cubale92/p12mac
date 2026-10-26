@@ -1,0 +1,11 @@
+P-12 VST duplicate detection update
+
+- Exact duplicate scan paths are collapsed so the same file is not listed twice just because scan roots overlap.
+- Plug-ins with the same format/vendor/name at different paths are marked DUP 1/N, DUP 2/N, etc.
+- The VST browser now displays the full path for every copy.
+- New duplicate filter: All copies / Duplicates only / Unique only.
+- New USE THIS COPY button stores the preferred path for each duplicate group.
+- Preferred copies are marked with a checkmark and sorted ahead of other copies in that duplicate group.
+- Mixer-32 VST menus include the full path for duplicate names so copies are distinguishable before loading.
+- Scan status reports duplicate groups and duplicate copy count.
+- No native-host rebuild is required for this update.

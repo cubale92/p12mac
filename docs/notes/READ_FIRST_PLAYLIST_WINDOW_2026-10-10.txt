@@ -1,0 +1,27 @@
+P-12 FULL15 - PLAYLIST WINDOW / PER-ENTRY LENGTH - 2026-10-10
+
+Both PLAYLIST - ARRANGEMENT buttons open one separate resizable Electron window.
+The main application owns the only arrangement and transport state. Reopening
+focuses the existing window. Opening and editing do not issue transport commands.
+
+Choose a sequence and + SEQ to add an entry. Add Sequence 1 twice; set the first
+entry LENGTH (BARS) to 8, and the second to 1. The original 8-bar Sequence 1 stays
+unchanged. FROM BAR selects where that entry begins in its original sequence.
+Drag or use arrows to reorder; lengths and selected SP MIX follow each entry.
+REMOVE deletes one entry, CLEAR empties the song. SONG and STOP use the existing
+main transport. Edits apply on the next SONG start; saving Project.p12 retains
+all entry ranges. Maximum entry length is the remaining original sequence bars.
+Standalone HTML uses a separate dialog with the original arrangement controls.
+
+Verified: real main/detached renderer actions; Sequence 1 (8 bars + 1 bar) makes a
+9-bar native playback plan, source remains 8 bars; reordering preserves ranges;
+duplicate Play coalesced, Stop works; Project.p12 save/reload retains lengths.
+Electron window handlers tested for resize, single-window reuse, sender isolation
+and state/action routing. Visual layout inspected. Integrated preflight passed.
+
+Includes all earlier fixes, including HFE file-picker import, pads/mute sync,
+Song below Reverb, native inserts and transport fixes. Protected Rossum .sp12
+export encoder unchanged. This feature adds no export encoder changes.
+
+Complete source/build package. Extract fresh and rebuild on Windows with
+BUILD_FULL15_ORIGINAL_GUI.cmd. No newly compiled Windows executable in this ZIP.

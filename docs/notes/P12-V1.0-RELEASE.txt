@@ -1,0 +1,15 @@
+P-12 v1.0 — release policy
+==========================
+
+This release is based on the v1.1.18 development tree and is renamed P-12 v1.0.
+
+Export policy:
+- Rossum .sp12: one Rossum image, up to the supported ~20-second / eight-page sound RAM layout.
+- Vintage .hfe: each disk is four 64K sound pages (~10 seconds); projects over 10 seconds automatically export additional numbered HFE disks.
+- HFE never auto-splits into DISK_01 / DISK_02 / DISK_03 sets.
+- The deterministic mono / 26.04 kHz / 12-bit Rossum audio conversion path is unchanged.
+
+Build version:
+- Application branding: P-12 v1.0
+- package.json semver: 1.0.0
+- Windows installer artifact: P-12-v1.0-x64.exe

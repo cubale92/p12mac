@@ -1,0 +1,24 @@
+P-12 v1.1.8 Rossum hardware-safe full audit
+
+AUDITED / FIXED
+- Removed the experimental synthetic 13-slot C/D allocator from runtime code.
+- Main Rossum button remains strictly ONE FILE. No automatic SET_01/SET_02/SET_03 fallback.
+- Export now checks REAL donor slot capacity before physical page fit, so 13 sounds on the 9-slot built-in donor reports SP12 SLOT LIMIT instead of the misleading SP12 PAGE FIT BLOCKED.
+- Physical page-fit analysis still uses exact rendered Rossum audio and even-sample allocator reservation.
+- Per-sound Chop preflight uses exact post-Tune/post-Pitch/post-Warp rendered length, not raw source duration.
+- Memory-fit Chop assistant is offered only when page fragmentation can actually be repaired and enough verified donor slots remain.
+- Built-in sample export keeps the proven donor header/directory/allocator byte-identical and writes audio only.
+- Imported donor mode now maps arbitrary P-12 source pads into the donor's EXISTING real active slots using the safe fit planner. It no longer requires source pad IDs to match donor pad IDs.
+- Imported donor metadata remains byte-identical; no allocator synthesis is performed.
+- A future real Rossum donor with 13+ active sounds can therefore be used directly for a 13-pad P-12 project.
+- Sequence-memory analyzer remains read-only. P-12 does not write guessed 3-byte sequencer events.
+- Sequence work is isolated from sound directory/allocator metadata.
+- HTML: no duplicate element IDs.
+- SP12 constants: no unresolved references after removal of the experimental allocator.
+- Inline JavaScript syntax: PASS.
+- Electron main.js syntax: PASS.
+- Electron preload.js syntax: PASS.
+- package.json parse: PASS.
+
+KNOWN HARDWARE LIMIT
+The built-in real PLOK donor contains 9 active hardware-valid sound slots. The current piano project contains 13 rendered sounds. Without a real one-file Rossum donor containing at least 13 active sounds, P-12 will block that exact 13-pad export rather than generate another readable-but-silent image.

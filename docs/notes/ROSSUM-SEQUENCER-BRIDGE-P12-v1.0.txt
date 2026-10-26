@@ -1,0 +1,61 @@
+P-12 v1.0 — Rossum SP-1200 Sequencer Bridge
+2026-10-01
+
+Goal
+----
+Make the P-12 sequencer and the Rossum/E-mu SP-1200 sequencer work in both
+directions without inventing undocumented .sp12 event bytes.
+
+Implemented
+-----------
+1. Exact original SP-1200 MIDI play-button map for all 32 pads:
+   A1-A8 = 60,61,62,63,64,65,66,67
+   B1-B8 = 42,44,46,49,51,54,56,58
+   C1-C8 = 47,48,50,52,53,55,57,59
+   D1-D8 = 36,38,40,41,43,45,39,37
+
+2. P-12 -> Rossum
+   - P-12 live pad hits send the correct hardware MIDI note for A1..D8.
+   - P-12 sequencer steps send the correct hardware MIDI note for A1..D8.
+   - Existing MIDI Clock + Start/Stop output remains active, so Rossum can follow
+     P-12 transport while its sounds are triggered by the P-12 pattern.
+
+3. Rossum -> P-12
+   - Incoming SP-1200 notes trigger their exact P-12 A1..D8 pad, independent of
+     which P-12 bank is currently visible.
+   - With MIDI enabled and LIVE REC armed, incoming Rossum playback paints those
+     hits onto the P-12 sequencer grid.
+   - MIDI Start, Continue, Stop, Clock and Song Position are understood.
+   - 24-PPQN MIDI clock is converted to the P-12 16th-note grid (6 clocks/cell).
+   - Multi-bar captures auto-grow the P-12 pattern instead of wrapping at 16 steps.
+   - P-12 estimates and follows the Rossum BPM from incoming MIDI Clock.
+   - Incoming MIDI Song Select 0..15 selects P-12 Pattern 1..16.
+
+4. .sp12 safety
+   - Imported Rossum .sp12 sequence bytes are still preserved untouched when an
+     imported .sp12 is used as the donor/template.
+   - The private Rossum 3-byte event encoding is NOT rewritten from guesses.
+
+How to mirror a Rossum sequence onto the P-12 grid
+---------------------------------------------------
+- Connect Rossum MIDI OUT -> computer/P-12 MIDI IN.
+- Enable MIDI in P-12.
+- Arm LIVE REC in P-12.
+- Start the sequence on the Rossum.
+- Rossum MIDI notes are recorded into the corresponding P-12 A1..D8 rows while
+  Rossum clock/transport determines the grid position.
+
+How to play the Rossum from the P-12 sequencer
+----------------------------------------------
+- Connect computer/P-12 MIDI OUT -> Rossum MIDI IN.
+- Enable MIDI in P-12 and choose the Rossum MIDI output.
+- Set the Rossum to receive MIDI on the selected channel.
+- Play the P-12 pattern. P-12 sends Rossum's exact non-chromatic pad-note map,
+  plus MIDI Clock and transport.
+
+Known boundary
+--------------
+The P-12 UI is a 16th-note step grid. Rossum timing arriving between grid cells is
+quantized to the nearest P-12 16th during LIVE REC capture. The raw .sp12 sequence
+block is preserved, but offline binary event->grid conversion is not fabricated from
+an unverified byte layout.

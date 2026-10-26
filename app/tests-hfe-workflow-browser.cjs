@@ -1,0 +1,33 @@
+'use strict';const fs=require('node:fs'),assert=require('node:assert/strict');const {chromium}=require('playwright');
+(async()=>{const browser=await chromium.launch({executablePath:process.env.P12_CHROMIUM,headless:true,args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']});try{
+ const page=await browser.newPage({viewport:{width:1600,height:980}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const probe=`window.hfeWorkflow={state,load:loadProject,export:exportHFEHardwareTest,decode:p12HfeToStateImage,stamp:()=>p12HfeSequenceStamp(),baseline:()=>p12HfeSourceSequenceStamp};`;
+ await page.setContent(fs.readFileSync('P-12.html','utf8').replace('  setInterval(p12SyncPadControls,60);','  setInterval(p12SyncPadControls,60);'+probe),{waitUntil:'domcontentloaded'});
+ const src=fs.readFileSync(require('node:path').join(process.env.P12_HFE_REFERENCE_DIR||'/workspace/scratch/dab1b0493eea/upload','FORESTKKO.sp12'));
+ await page.waitForTimeout(100);
+ await page.locator('#loadProjectInput').setInputFiles({name:'FORESTKKO.sp12',mimeType:'application/octet-stream',buffer:src});
+ await page.waitForFunction(()=>Object.keys(window.hfeWorkflow.state.samples).length===7&&window.hfeWorkflow.stamp()===window.hfeWorkflow.baseline());
+ const imported=await page.evaluate(()=>{const api=window.hfeWorkflow;return {sounds:Object.keys(api.state.samples).length,stamp:api.stamp()===api.baseline(),routes:Object.entries(api.state.sp12OutputChannel).filter(([fid])=>api.state.samples[fid]).map(([fid,ch])=>[fid,ch])};});
+ assert.equal(imported.sounds,7);assert(imported.stamp);assert.deepEqual(imported.routes,[['A_kick',1],['A_snare',2],['A_clap',3],['A_chat',8],['A_ohat',8],['A_cow',8],['A_tom',7]]);
+ const emitted=await page.evaluate(async()=>{
+  const create=URL.createObjectURL;let blob;URL.createObjectURL=b=>{blob=b;return create(b);};await window.hfeWorkflow.export();URL.createObjectURL=create;
+  if(!blob)throw new Error(document.getElementById('lcdMain').textContent);
+  return Array.from(new Uint8Array(await blob.arrayBuffer()));
+ });
+ const back=await page.evaluate(bytes=>Array.from(window.hfeWorkflow.decode(new Uint8Array(bytes))),emitted);const b=Buffer.from(back);
+ assert.deepEqual(b.subarray(0x10,0x9110),src.subarray(0x10,0x9110),'actual exported sequence/song RAM');
+ for(const n of [24,25,26,28,29,30,31])assert.equal(b[0x9260+n*10+2],src[0x9260+n*10+2],'actual exported output/mode/level byte '+n);
+ await page.evaluate(()=>{window.hfeWorkflow.state.sampleNames.A_kick='OLD PROJECT';window.hfeWorkflow.state.mute.A_kick=true;window.hfeWorkflow.state.masterVolume=17;});
+ await page.locator('#loadProjectInput').setInputFiles({name:'CHECK.HFE',mimeType:'application/octet-stream',buffer:Buffer.from(emitted)});
+ await page.waitForFunction(()=>window.hfeWorkflow.state.sampleNames.A_kick!=='OLD PROJECT'&&Object.keys(window.hfeWorkflow.state.samples).length===7&&window.hfeWorkflow.stamp()===window.hfeWorkflow.baseline());
+ assert.equal(await page.evaluate(()=>window.hfeWorkflow.state.mute.A_kick),false);
+ assert.equal(await page.evaluate(()=>window.hfeWorkflow.state.masterVolume),100);
+ const roundtrip=await page.evaluate(()=>{const api=window.hfeWorkflow;return {sounds:Object.keys(api.state.samples).length,baseline:api.stamp()===api.baseline(),patterns:Object.values(api.state.patterns).filter(p=>p.rossumNative).length,accept:document.getElementById('loadProjectInput').accept};});
+ assert.equal(roundtrip.sounds,7);
+ const before=await page.evaluate(()=>({name:window.hfeWorkflow.state.sampleNames.A_kick,stamp:window.hfeWorkflow.stamp()}));
+ await page.locator('#loadProjectInput').setInputFiles({name:'BROKEN.HFE',mimeType:'application/octet-stream',buffer:Buffer.from(emitted).subarray(0,10000)});
+ await page.waitForFunction(()=>document.getElementById('lcdMain').textContent==='HFE IMPORT ERROR');
+ assert.deepEqual(await page.evaluate(()=>({name:window.hfeWorkflow.state.sampleNames.A_kick,stamp:window.hfeWorkflow.stamp()})),before,'invalid HFE retains current project');assert(roundtrip.baseline);assert.equal(roundtrip.patterns,3);assert(roundtrip.accept.includes('.hfe'));
+ assert.equal(errors.length,0,errors.join('\n'));if(process.argv[2])fs.writeFileSync(process.argv[2],Buffer.from(emitted));
+ console.log('PASS original GUI workflow: import FORESTKKO.sp12, export HFE, exact sequence/song RAM and live routing, real LOAD file input accepts HFE, resets prior project and restores seven sounds / three sequences; malformed HFE preserves current project');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1);});

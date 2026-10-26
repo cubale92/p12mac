@@ -1,0 +1,3 @@
+P-12 Extract deterministic SP-1200 no-beep fix
+Updated: 2026-10-03
+Only the P-12 Extract SP-1200 conversion payload was replaced; full Windows package retained.

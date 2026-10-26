@@ -1,0 +1,38 @@
+plugins { id 'com.android.application' }
+
+// Release signing (optional): set these environment variables to a permanent
+// keystore so every future build can update existing installs:
+//   P12_KEYSTORE (path), P12_KEYSTORE_PASSWORD, P12_KEY_ALIAS, P12_KEY_PASSWORD
+// GitLab CI decodes the P12_KEYSTORE_BASE64 variable into P12_KEYSTORE.
+def releaseKeystore = System.getenv('P12_KEYSTORE')
+
+android {
+    namespace 'com.p12.sampler'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.p12.sampler'
+        minSdk 26
+        targetSdk 35
+        versionCode 13
+        versionName '1.1.2-icon-fix'
+    }
+
+    signingConfigs {
+        if (releaseKeystore) {
+            release {
+                storeFile file(releaseKeystore)
+                storePassword System.getenv('P12_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('P12_KEY_ALIAS')
+                keyPassword System.getenv('P12_KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (releaseKeystore) signingConfig signingConfigs.release
+        }
+    }
+}

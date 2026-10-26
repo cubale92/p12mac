@@ -1,0 +1,12 @@
+P-12 v1.0 — Tune BF / Tune AT native-event offset fix
+
+- Built from the known-good MPC adaptive Time Correct / swing build.
+- Tune BF remains the pre-sample/baked pitch stage.
+- Imported Rossum per-hit tune remains attached to native sequencer events.
+- Import no longer copies the modal event tune into global Tune AT.
+- Tune AT now starts neutral for imported native tune events and is added as a
+  non-destructive post-sample correction on top of the native event pitch.
+- Tune AT / SP mode / SP decay / SP output controls no longer mark a Rossum
+  native pattern dirty, so these controls cannot switch playback to the rounded
+  grid path and cannot destroy the native swing timing.
+- The experimental INIT DK/TUNE-as-linear-semitones change is NOT included.

@@ -1,0 +1,35 @@
+P-12 v1.0 — PLOK pitch / Tune AT / SP Decay fix
+
+What was wrong:
+1. Native Rossum event Tune bytes were incorrectly treated as 0..255.
+   The SP-1200 Tune fader uses 16 semitone positions:
+   0=+7, 7=0, 15=-8.
+   PLOK contains values such as 13 and 10, so the old /255 mapping lost the
+   actual pitch relationship. They now decode as -6 and -3 semitones.
+
+2. Tune AT was disabled whenever a pad was in SP DECAY mode.
+   Tune AT is now always the post-sample pitch control. A native TUNED event
+   can still supply its recorded per-event pitch lock.
+
+3. Native DECAY event values were also incorrectly normalized as /255.
+   They now use the native low 4-bit fader position /15.
+
+4. SP DECAY shortened the BufferSource duration itself.
+   The complete imported Rossum sample now always plays for its stored length;
+   SP DECAY only applies an amplitude envelope.
+
+5. Loading a new .sp12 now resets SP Tune/Decay/Out state first so settings
+   from the previous project cannot leak into the newly imported Rossum file.
+
+Preserved:
+- previous SP TUNE audio routing fix
+- Audio Device default-output recovery
+- Tune BF / Tune AT
+- Rossum mix/song work
+- direct BPM entry
+- sequencer/triplet work
+
+Validation:
+- active HTML entry files are byte-identical
+- all inline JavaScript passes node --check
+- ZIP integrity passes

@@ -1,0 +1,37 @@
+P-12 FULL15 - NATIVE SSL BUS / SPECTRUM / LIVE UNMUTE - 2026-10-10
+
+REBUILD BOTH ELECTRON AND THE NATIVE HOST using BUILD_FULL15_ORIGINAL_GUI.cmd.
+The original main-page SSL controls previously affected only Web Audio, while
+native playback went straight to the device. Native host 0.5.3 adds the dedicated
+SSL-style master compressor after master inserts and before the master fader.
+Threshold, ratio, attack, release, makeup, parallel mix and bypass now update
+native scalars. Stereo-linked detection, fixed soft knee and gain smoothing.
+No audio callback allocations, locks or transport commands are added.
+
+Mixer32 spectra were drawn only on the hidden original-page canvases and never
+sent to the detached window. Detached canvases now receive compact 12-band data
+in the existing meter packets. Native spectra are actual 1024-point Hann FFTs,
+not amplitude-shaped animation. Audio callback writes fixed atomic rings; FFT
+runs on the command worker at approximately 15Hz. Capture expires after polling
+stops. Both native and Web Audio spectra are supported, for pads/tracks/master.
+
+Mute regression: native plans discarded muted notes during compilation. A main
+page action rebuilt the plan, but unmuting through Mixer32 only restored gain,
+leaving no notes until another main-page click. Plans now retain notes across
+mute/solo changes. Live gains and native dispatch control audibility; muted new
+hits/chokes are gated without dropping MIDI note-offs. Unmuting resumes future
+scheduled hits immediately. Mute UI actions do not restage the native plan.
+
+Verified: native C++ compressor output, all seven controls / bypass and stereo
+link, allocation-free processing; FFT distinguishes 220Hz from 4kHz and clears
+silence; renderer SSL controls reach native master; actual detached spectrum
+canvas pixels in native and Web Audio; live main-page mute -> Mixer32 unmute
+without reopening Pad Mute or recompiling the plan; native clock and pad DSP
+regressions; integrated preflight and protected Rossum source hash.
+Windows host build includes a required p12-bus-spectrum-tests target. Full
+Windows JUCE/VST host execution must be checked after building on Windows.
+
+Includes all earlier HFE import, Playlist window / independent entry length,
+pad layout, mixer scrolling, inserts and transport fixes. No changes to HFE
+export, .sp12 import, or protected Rossum .sp12 export encoder.
+Complete source/build ZIP, not a newly compiled Windows executable.

@@ -1,0 +1,6 @@
+P-12 v1.0 BPM direct-entry update
+- Added an always-visible numeric BPM field beside the tempo readout.
+- Range: 20.0–400.0 BPM, 0.1 BPM resolution.
+- Press Enter or SET to apply.
+- Knob, typed BPM, Tap Tempo, imported pattern tempo, and pattern switching stay synchronized.
+- Built on the AUDIO_RESTORE_SAFE_OUTPUT version so the safe default-output behavior is preserved.

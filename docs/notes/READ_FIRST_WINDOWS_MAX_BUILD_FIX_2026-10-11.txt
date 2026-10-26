@@ -1,0 +1,15 @@
+P-12 FULL15 Windows compilation fix — 2026-10-11
+
+Fixes the uploaded P12_COMPILER_ERROR.log C4002 / C2589 / C3878 errors
+at main.cpp line 1553. Windows' max macro was expanding the new warm-up
+std::max call. NOMINMAX is now defined before JUCE/Windows headers, and
+that call uses (std::max)(...) so it is immune to function-like max macros.
+
+Full latest package: previous timing, logging, Ozone resources, SSL,
+spectrum, live unmute, Mixer32 and HFE fixes remain included.
+GUI layout and protected Rossum .sp12 encoder remain unchanged.
+
+Extract into a new folder, run BUILD_FULL15_ORIGINAL_GUI.cmd.
+Full Windows build still runs on your PC. This environment checked the
+actual failing expression with a deliberately hostile Windows-style max
+macro, FULL15 preflight and the protected Rossum encoder check; all passed.

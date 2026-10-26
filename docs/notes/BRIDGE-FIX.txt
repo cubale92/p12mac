@@ -1,0 +1,16 @@
+P-12 ELECTRON VST FOLDER BRIDGE FIX
+
+Run P-12 through Electron; do not open P-12.html directly in Chrome/Edge.
+
+Development:
+  npm install
+  npm start
+
+Windows installer:
+  npm install
+  npm run dist:win
+
+This package exposes the VST folder picker through both window.electronAPI and window.p12Electron.
+The Browse UI now distinguishes a missing preload bridge from a canceled folder dialog.
+
+NOTE: VST folder browse/scan works with this Electron bridge. Actual VST DSP still requires native/p12-vst-host.exe.

@@ -1,0 +1,13 @@
+P-12 v1.1.12 Rossum audio pipeline fix
+
+Hardware confirmation:
+- A4 using the previous WebAudio SP12 renderer produced the sustained beep.
+- The same source rendered outside WebAudio with explicit mono conversion, deterministic 26.04 kHz resampling, DC removal, and the old proven SDS 12-bit mapping played perfectly on Rossum hardware.
+
+Changes:
+- Explicit average-to-mono for all source channel counts.
+- Deterministic band-limited sinc/Blackman resampler to 26,040 Hz.
+- Tiny DC-bias removal after resampling.
+- Exact proven 12-bit offset-binary mapping: round(v*2047)+2048.
+- Keeps v1.1.11 page-used/high-water synchronization and 13-pad A/B mapping fixes.
+- Main Rossum export remains one .sp12 file only.

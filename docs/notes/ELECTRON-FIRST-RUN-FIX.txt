@@ -1,0 +1,16 @@
+P-12 Electron first-run fix
+===========================
+
+Problem fixed:
+The previous launcher assumed npm install must create:
+  node_modules\electron\dist\electron.exe
+
+That assumption is no longer reliable with current Electron releases. The
+Electron npm package can be present while the platform binary is fetched on
+first execution.
+
+New behavior:
+- npm install --include=dev only when the Electron package itself is missing.
+- Launches with `npx --yes electron .`.
+- Lets Electron obtain its matching Windows binary on first run.
+- Keeps the command window open and logs output to P12_START.log.

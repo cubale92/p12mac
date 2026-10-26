@@ -1,0 +1,18 @@
+P-12 v1.0 — triplet / PPQ authoritative playback fix
+2026-10-02
+
+Root cause:
+- Live Time Correct already stored exact 24-PPQN micro-events.
+- P-12 also wrote a rounded 16th-grid cell for display/editing.
+- For triplet positions that do not land on a 6-tick 16th boundary, the
+  display cell can round to the next 16th (example: tick 16 -> tick 18).
+- Scheduler suppressed the grid cell only in the micro-event's containing
+  16th, not the rounded proxy cell. Result: exact triplet hit + duplicate
+  rounded hit, audibly crowding the following snare.
+
+Fix:
+- microEvents remain authoritative for playback.
+- Scheduler suppresses both the containing 16th cell and the rounded visual
+  proxy cell for the same track/pad event.
+- No audio engine, SP-1200 pitch, sample decoding, or Rossum import code was
+  changed in this fix.

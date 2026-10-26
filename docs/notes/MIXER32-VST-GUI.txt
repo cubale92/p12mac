@@ -1,0 +1,16 @@
+P-12 Mixer-32 VST GUI integration
+
+This build adds consistent VST controls to pad, sequencer-track, and master insert strips.
+Each of the 4 insert slots can show:
+- VST GUI: open the editor of the VST currently loaded in that exact insert.
+- CHANGE: reopen the VST browser for that exact insert slot.
+
+Electron bridge additions:
+- openVSTEditor / showVSTEditor / openPluginEditor / showPluginEditor
+- closeVSTEditor
+
+Native host protocol additions:
+- openEditor
+- closeEditor
+
+IMPORTANT: A native VST host executable is still required for real VST DSP and the real native plug-in editor window. Put the compiled host at native/p12-vst-host.exe on Windows. The host must implement the JSON-lines commands documented in native/README.txt.

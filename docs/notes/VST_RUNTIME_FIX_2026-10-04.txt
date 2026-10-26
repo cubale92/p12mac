@@ -1,0 +1,11 @@
+P-12 VST runtime patch (experimental) — October 4, 2026
+
+1. Mixer insert ON/OFF now reuses the same loaded VST3 instance instead of rescanning and instantiating it on every click.
+2. Assigning a master insert rebuilds the live master VST audio branch, rather than leaving it bypassed until the audio engine is restarted.
+3. Native PCM runs on the host IPC thread; JUCE GUI calls are posted asynchronously to its GUI thread. This prevents slow GUI construction from intentionally blocking all incoming PCM messages.
+4. Native processed audio response queue is bounded, and dry fallback is used if PCM is delayed.
+5. Console logs when a PCM stream carries sound but zero VST effects actually processed it.
+
+LIMITATIONS: Native JUCE host must be recompiled using BUILD_P12_WINDOWS_EXE.cmd; already-installed p12-vst-host.exe will not receive these changes. ScriptProcessor/JSON/base64 PCM is experimental and adds substantial latency. This package is unverified with commercial Ozone; it is not a final low-latency real-time VST host. Pad/track slot additions affect newly created voices; retrigger an existing sample. VST plug-in instances are not yet sample-accurately shared across overlapping voices or offline export.
+
+To inspect logs: open Developer Tools / renderer console for P-12 VST PCM ACTIVE or ZERO PLUGINS PROCESSED. Check native-host stderr for [P12] LOAD OK.

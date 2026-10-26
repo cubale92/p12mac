@@ -1,0 +1,15 @@
+P-12 VST SAFE-MODE UPDATE
+
+- VST browser now separates LOAD from OPEN GUI.
+- Double-click only selects; it no longer loads/opens a plug-in automatically.
+- Mixer insert replacement loads first and keeps the browser open; GUI is opened explicitly.
+- Failed VSTs remain visible and are marked FAILED THIS SESSION with the failure reason in the tooltip/status.
+- GENERIC GUI is available as a safer fallback when a manufacturer editor crashes.
+- Electron logs every native VST request (command/path/target/slot) to P12_ELECTRON.log.
+- Native host logs LOAD BEGIN/LOAD OK and EDITOR BEGIN/EDITOR OK to stderr; Electron captures these lines in P12_ELECTRON.log.
+- Commercial plug-in login/license checks are not bypassed. Authorize through the plug-in/vendor normally. Keep the same p12-vst-host.exe path/build while testing persistence.
+
+Rebuild the native host after replacing files:
+  BUILD_P12_VST3_ONLY.cmd
+Then launch:
+  START_P12.cmd

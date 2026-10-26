@@ -1,0 +1,39 @@
+P-12 v1.0 — Rossum Swing + Time Correct import/playback fix
+
+Checked against the supplied PLOK .sp12:
+- Swing stored in segment header: 67%
+- Native event positions resolve to Time Correct: 1/16
+- PLOK contains hits on 6-tick boundaries, so 1/16 is the coarsest grid that
+  contains every hit.
+
+Fixes:
+- Imported Rossum segments now get per-pattern Time Correct inferred from the
+  native 24-PPQN event positions.
+- Pattern switching restores that pattern's Time Correct setting.
+- Loading PLOK now changes P-12 to Swing 67% and Time Correct 1/16.
+- Native Rossum events now actually receive the segment swing during playback.
+  Before this, P-12 decoded the Swing header but scheduled the native events
+  without using it.
+- P-12 micro-events use the same Time Correct + Swing timing.
+- Time Correct is stored per pattern and survives P-12 project save/load.
+
+Hardware note:
+The SP-1200's Auto Correct is destructive recording behavior. A saved .sp12
+contains the resulting event positions, not an unambiguous history of which
+button setting was used in every possible sparse pattern. P-12 therefore uses
+the coarsest supported grid consistent with all recorded hits.
+
+Preserved:
+- PLOK pitch import correction
+- Tune AT pitch correction
+- SP DECAY full sample-length correction
+- SP TUNE audio routing correction
+- Audio Device default-output recovery
+- Rossum mix/song support
+- direct BPM entry
+
+Validation:
+- actual supplied PLOK checked
+- all active HTML entry files are identical
+- all inline JavaScript passes node --check
+- ZIP integrity passes

@@ -1,0 +1,13 @@
+P-12 FULL15 - SONG / PLAYLIST POSITION - 2026-10-10
+
+Song / Playlist now sits directly below Reverb Space in the lower FX column.
+This order is preserved when switching between horizontal and vertical layouts.
+Includes the preceding full-width pads and main-page / Mixer32 mute synchronization fixes.
+Original controls, native engine, and protected Rossum .sp12 encoder retained.
+
+Complete source/build package. Extract to a fresh folder and run
+BUILD_FULL15_ORIGINAL_GUI.cmd on Windows to rebuild.
+
+Validated in actual Chromium: sibling order and screen position in both layouts,
+all eight enlarged pads at 1536px, bidirectional pad and track mute including native
+gain, and protected Rossum source hash.

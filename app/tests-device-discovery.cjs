@@ -1,0 +1,14 @@
+'use strict';
+const assert=require('node:assert/strict'),dgram=require('node:dgram'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const {WirelessMidi}=require('./p12-wireless-midi.cjs');const {WebSocket}=require('./vendor/ws');const {P12WirelessClient}=require('./p12-wireless-client.js');
+const wait=async(test)=>{for(let n=0;n<150;n++){if(test())return;await new Promise(r=>setTimeout(r,20));}throw Error('Timed out');};
+(async()=>{const folder=fs.mkdtempSync(path.join(os.tmpdir(),'p12-discovery-')),trustFile=path.join(folder,'trust.json');let host=new WirelessMidi({port:0,host:'127.0.0.1',discoveryPort:0,trustFile}),client;const udp=dgram.createSocket('udp4');try{
+ await host.start();const initialId=host.deviceId;
+ const response=new Promise(resolve=>udp.once('message',b=>resolve(JSON.parse(b))));udp.send(Buffer.from(JSON.stringify({type:'p12-discover-v1',nonce:'test-nonce-123'})),host.discovery.port,'127.0.0.1');const found=await response;assert.equal(found.id,initialId);assert.equal(found.port,host.port);assert.equal(found.token,undefined);assert.equal(found.code,undefined);
+ const memory=new Map();client=new P12WirelessClient({WebSocketClass:WebSocket});client.store={getItem:k=>memory.get(k),setItem:(k,v)=>memory.set(k,v),removeItem:k=>memory.delete(k)};const peer={id:found.id,name:found.name,address:'http://127.0.0.1:'+host.port};let notes=0;host.on('midi',()=>notes++);
+ client.connectDevice(peer);await wait(()=>host.pending.size===1);assert.equal(client.send([144,60,100]),false);await host.approve([...host.pending.keys()][0],true);await wait(()=>client.connected);assert(client.remembered().token);client.send([144,60,100]);await wait(()=>notes===1);
+ client.disconnect();await wait(()=>host.peers.size===0);client.connectDevice(client.remembered(),true);await wait(()=>client.connected);assert.equal(host.pending.size,0);
+ client.disconnect();await host.stop();host=new WirelessMidi({port:0,host:'127.0.0.1',discoveryPort:0,trustFile});await host.start();assert.equal(host.deviceId,initialId);client.connectDevice({...client.remembered(),address:'http://127.0.0.1:'+host.port},true);await wait(()=>client.connected);await host.forget(client.identity());await wait(()=>!client.connected);assert.equal(host.pending.size,0);
+ client.connectDevice({...peer,address:'http://127.0.0.1:'+host.port});await wait(()=>host.pending.size===1);await host.approve([...host.pending.keys()][0],false);await wait(()=>!client.reconnect);assert.equal(client.connected,false);
+ console.log('PASS: UDP discovery; approval gate; remembered pairing; restart; revocation; decline; no transport on reconnect');
+ }finally{client?.disconnect();udp.close();await host.stop();fs.rmSync(folder,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

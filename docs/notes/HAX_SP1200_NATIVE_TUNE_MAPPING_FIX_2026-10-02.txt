@@ -1,0 +1,25 @@
+P-12 v1.0 — HAX / SP-1200 native Tune BF + Tune AT correction
+
+Hardware mapping restored:
+- SP-1200 native Tune AT is a 4-bit 16-position value.
+- code 0 = +7 semitones
+- code 7 = 0 / center
+- code 15 = -8 semitones
+- formula: semitones = 7 - code
+
+HAX.sp12 verification:
+- A_tom Multi-Pitch codes 6 / 3 / 4 => +1 / +4 / +3 semitones
+- A_cow code 14 => -7 semitones
+- A_kick / A_snare / A_clap code 7 => 0 semitones
+
+_LOK.sp12 verification:
+- A_chat code 11 / 13 => -4 / -6 semitones
+- A_kick code 0 => +7 semitones
+- A_rim code 2 / 15 / 4 => +5 / -8 / +3 semitones
+
+Fixes:
+- reverted incorrect reversed Tune AT direction from prior HAX build
+- removed experimental +1 global native-event correction
+- Tune AT UI range is now the actual hardware -8..+7 semitone range
+- Tune BF remains a separate pre-sample stage and is not used to reinterpret native Rossum events
+- no sequencer, PPQ, Time Correct or swing logic changed

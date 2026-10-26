@@ -1,0 +1,40 @@
+P-12 FULL15 — HFE sequence / routing / LOAD fix — 2026-10-10
+
+The supplied KKOY.hfe contains all seven source samples at their original lengths
+and valid FM sector CRCs. Its audio closely matches FORESTKKO.sp12. However:
+- HFE export retained the bundled disk's sequence RAM instead of FORESTKKO's beat.
+- The HFE state builder assigned neutral-template output channels instead of the
+  imported live channels. On hardware this changes the monophonic cut-off groups.
+
+Fixes:
+- Copy sequence/song RAM from Rossum offset 0x10 into floppy sectors 12..22.
+  Sequence sectors advance by full 3584 bytes. Audio sectors advance by 3552,
+  retaining their 32-byte overlaps. Both mappings verified against original HFE
+  and the corresponding physical Rossum save, not guessed from current exports.
+- Keep exact imported sequence/song RAM when unedited; edited/new beats use the
+  existing native sequence writer for HFE preparation only.
+- Preserve imported metadata, stored mixes and current live pad routing/levels.
+- Existing LOAD accepts .hfe with signature/geometry/FM/CRC checks, reconstructs
+  the four physical sound pages [0,1,6,7], and restores sounds and sequencer data.
+- The proven .sp12 export encoder/source remains unchanged.
+
+Use:
+1. For the hardware test, use FORESTKKO_HFE_TEST/DSKA0000.HFE in the ZIP.
+   This is a direct, lossless conversion of FORESTKKO.sp12: seven sounds,
+   143392 exact 12-bit sample values, source sample lengths, routing and beat.
+   It carries four vintage disk pages. It has not yet been tested on hardware.
+2. Extract P12_FULL15 to a fresh folder and rebuild with BUILD_FULL15_ORIGINAL_GUI.cmd.
+3. P-12 LOAD now accepts .hfe. Load the test disk to check its samples/sequences.
+4. Keep Native Audio ON for VST3 inserts. Earlier meter, Auto Wah and project-reset
+   fixes remain included. Original GUI and Mixer-32 layout/scrolling retained.
+
+Validation:
+- Full integrated preflight and protected Rossum source hash pass.
+- Independent decoder checks all 160 sector CRCs, source reference mapping,
+  seven exact source sounds and malformed/truncated HFE rejection.
+- Actual original-GUI browser workflow loads FORESTKKO.sp12, exports .hfe,
+  verifies exact source sequence RAM and routing, then LOAD HFE restores seven
+  sounds and three sequences.
+- Physical SP-1200/Rossum playback and Windows build remain to be verified.
+
+Reference tests use P12_HFE_REFERENCE_DIR pointing to the supplied source files.

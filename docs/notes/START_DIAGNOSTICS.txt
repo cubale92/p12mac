@@ -1,0 +1,16 @@
+P-12 SAFE LAUNCHER
+===================
+
+Double-click START_P12.cmd.
+
+This launcher deliberately uses CMD /K, so the console cannot close on its own.
+It bypasses `npm start` and starts Electron directly from:
+  node_modules\electron\dist\electron.exe
+
+If P-12 exits or disappears, send both files:
+  P12_START.log
+  %APPDATA%\p12-desktop\P12_ELECTRON.log
+
+P12_START.log records Node/npm/Electron launch information.
+P12_ELECTRON.log records BrowserWindow, HTML load, renderer crash,
+and Electron process errors.

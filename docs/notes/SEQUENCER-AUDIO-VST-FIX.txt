@@ -1,0 +1,1 @@
+P-12 sequencer fix: scheduled steps now keep internal pad/sample playback and also send targeted note on/off events to active Pad/Track VST2/VST3 inserts. External Web MIDI steps now send notes as well as clock. Includes exact P-12 icon in HTML and Windows icon build config.

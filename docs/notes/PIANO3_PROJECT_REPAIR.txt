@@ -1,0 +1,7 @@
+P-12 v1.1.8 project-state repair
+
+- Repairs stale padEmpty flags after JSON project load by deriving occupancy from actual decoded samples.
+- Save Project now normalizes occupancy before writing JSON.
+- piano(3).json contains 13 real pad sounds but only 7 unique embedded source recordings.
+- The Rossum slot-limit message is no longer treated as JSON corruption; it reports the current donor-directory limitation accurately.
+- No samples are deleted automatically.

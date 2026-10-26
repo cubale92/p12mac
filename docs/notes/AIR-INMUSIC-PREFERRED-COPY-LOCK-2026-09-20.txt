@@ -1,0 +1,12 @@
+P-12 AIR / inMusic duplicate protection
+
+- Detects AIR Reverb, AIR Compressor, Fabric XL and AIR/inMusic/Akai-labelled plug-ins.
+- Shows AIR/inMusic family and install-path class in the VST browser.
+- Adds AIR / inMusic / Akai vendor filter.
+- Adds Preferred Copy Lock (enabled by default).
+- USE THIS COPY both sets the preferred path and locks the identity to that path.
+- Mixer-32 and CHORDS share the same preferred-copy guard.
+- A non-preferred duplicate is rejected instead of silently replacing the selected copy.
+- Standard VST3 path is identified as C:\Program Files\Common Files\VST3; alternate copies are explicitly labelled.
+
+This does not bypass or alter vendor licensing. It prevents P-12 from accidentally choosing a different duplicate installation after you select the activated copy.

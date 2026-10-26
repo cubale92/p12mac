@@ -1,0 +1,30 @@
+P-12 FULL15: HFE extraction layout correction, 2026-10-10
+
+ONLY the HFE container builder was changed in the protected Rossum source region.
+Extract .sp12/.s12, deterministic resampling and quantization, GUI, native DSP,
+transport, Track 0 and independent 8 Levels controls remain as previously delivered.
+
+Evidence: user-provided original SP1200_OS12(3).hfe and a physical Rossum save
+SP1200_OS12.sp12. Neither is a P-12 export. Independently decoded all 160 sectors;
+all reference sector CRCs passed. The 974-byte sound header is identical between
+original HFE sector 23 and Rossum SP12 offsets 0x9114..0x94E2. Five occupied sounds,
+35,997 samples, match exactly with the corrected sector and page interpretation.
+
+Corrected HFE container mapping:
+- Preserve boot/software and all unrelated sectors. Put the sound header in sector 23.
+- Sound pages begin in sectors 24, 52, 80 and 108, each spanning 28 sectors.
+- Physical sound-sector payload is 0xE00 bytes; audio advances 0xDE0 bytes.
+  The final 32 bytes overlap the following sector. Reset stride at each page.
+- Local export pages 0,1,2,3 map to hardware page IDs 0,1,6,7, including page-use tables.
+- Preserve all pad name/record indexes. Pad placement is not reversed or reordered.
+- Keep page-end padding at packed true 12-bit silence. Recompute FM sector CRCs.
+
+Validation: tests-hfe-hardware-layout.cjs passed full four-page byte roundtrip,
+32 named pad identities, overlapping payloads, page-use mapping, all sector CRCs,
+boot/software preservation and immutable SP12 input. It also checked the supplied
+original HFE / physical Rossum pair sample-for-sample. Full integrated preflight passed.
+SHA256 protection covers all original Rossum source except the newly tested HFE builder.
+
+Extract this complete package to a fresh folder and run BUILD_FULL15_ORIGINAL_GUI.cmd.
+Then use Extract .hfe. Physical Rossum playback validation of the corrected export
+is still required; binary validation does not replace a hardware sound test.

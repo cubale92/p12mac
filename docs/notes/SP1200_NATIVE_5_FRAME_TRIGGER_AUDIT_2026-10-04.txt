@@ -1,0 +1,18 @@
+P-12 SP-1200 Native Start-Five-Samples Isolation Test
+
+FINDING: Every active sound in the 14 owner-supplied Rossum-native reference
+.sp12 projects begins with five exactly silent 12-bit samples (0x800).
+The P-12 JACKIEP12(1).sp12 export violates this on 10 of 11 sounds.
+
+CHANGE: The existing native renderPadForSP12 quantizer now writes 0x800
+for the first five frames of each newly converted sample, matching the
+observed hardware-native pattern. The byte packing, sample count, length
+counter, page allocation, stored mixes, global state, DAC sample rate,
+and existing post-end guard are unchanged in this single-variable test.
+
+TEST: Create a new .sp12 from P-12 with the same project. On the physical
+Rossum, compare (1) real sample pad presses (2) pads with no sample assigned
+(3) TRUNCATE playback and end-of-sample. Compare to old export.
+
+THIS IS A TEST BUILD, NOT A HARDWARE-VERIFIED CURE. Do not overwrite
+any working/native Rossum .sp12 projects or disks.

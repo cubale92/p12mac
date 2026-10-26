@@ -1,0 +1,45 @@
+P-12 FULL15: true dB mixer faders and live native master gain — 2026-10-10
+
+Continues the HFE audio/pad-layout correction. Original GUI, separate Mixer-32
+window, pinned Master, scrolling, Track 0 and independent 8 Levels controls retained.
+
+All 50 mixer level faders (32 pads, 8 beat tracks, Track 0, Master, 8 subchannels):
+- true logarithmic dB gain, -60 dB through +12 dB, plus bottom-position mute;
+- readable dB value while moving, and double-click to reset to 0 dB;
+- 0 dB is unity, +6 dB is approximately twice the amplitude, +12 dB approximately four;
+- stored pad/track/subchannel levels retain their existing linear units. Old project
+  channel levels are preserved. Main-page percentage knobs support the extended range.
+
+Native path:
+- master fader now reaches the native host and applies after master inserts;
+- all nine track buses have callback-owned gains after their insert chains;
+- pad + subchannel gains remain live scalar controls, with their previous hidden
+  1.5x / 2x clamps removed so boosts are not silently cut off;
+- note velocities remain independent of mixer gains. Dragging faders does not publish
+  a new sequence or issue transport commands. Track/master gains ramp over one block.
+- fresh native gain remains unity; no arbitrary boost, resampling or SP-character change.
+
+Browser fallback:
+- fresh master starts at unity instead of 80%; master affects the complete mix,
+  including reverb, after master processing and before final peak protection;
+- removed voice-count-dependent bus attenuation and offline WAV's fixed 0.25 gain;
+- moved final limiter threshold from -8 dB to -0.3 dB, with zero knee;
+- Classic retains existing saturation, Hi-Fi remains clean. Hot signals may saturate
+  or clip at the final output; use the meters rather than assuming boost adds headroom.
+
+Master volume now persists in Project.p12 and stopped/idle recovery. Fresh and older
+projects without that previously unsaved field start with the master at unity.
+
+Validation:
+- all 50 original UI faders: dB/mute/unity/+6/+12, native scalar bridge and subchannels;
+- Project.p12 roundtrip including master and isolated Track 0;
+- actual browser output RMS: correct -30/+6/+12 gain ratios and no polyphony ducking;
+- native held-pad boost, live track/master gains, mute and Track 0 independence;
+- native sampler, scheduled events, 5-second renderer-independent clock, SP character,
+  pad DSP, and zero callback allocations;
+- full integrated preflight and original Rossum encoder source checksum checks;
+- HFE full-page/32-pad/CRC/layout checks still pass. No .sp12/.s12 encoder changes.
+
+Windows JUCE host compilation and hardware listening must be verified locally.
+Extract this COMPLETE ZIP fresh and run BUILD_FULL15_ORIGINAL_GUI.cmd.
+This build replaces the prior HFE-fix ZIP; it includes that HFE correction too.

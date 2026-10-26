@@ -1,0 +1,23 @@
+P-12 FULL15 Windows recovery/startup follow-up — 2026-10-10
+
+Continues TRACK0_8LEVELS_BUILD_LOG_FIX with the original GUI and native JUCE/VST3 sources.
+
+Confirmed log finding: recovery writes fail with EPERM: operation not permitted, fsync.
+Fix: writable file handles for recovery-worker and atomic file service flushing.
+Recovery still runs only when stopped/idle. Added a regression that reproduces the
+Windows read-only fsync restriction and verifies snapshot rotation.
+
+Newest uploaded packaged sessions report native host unavailable; their audio log
+contains no new native-health readings. This update retains the actual host failure
+message and records missing-binary/start failures in diagnostics. It does not claim
+the unknown packaged startup failure is resolved. START_P12.cmd opens successfully
+according to the user; native operation in that launch still needs verification.
+
+Runtime logs: %APPDATA%\p12-desktop\P12_ELECTRON.log,
+P12_DIAGNOSTICS.log and P12_AUDIO_DEBUG.log. Launcher instructions corrected.
+Use BUILD_FULL15_ORIGINAL_GUI.cmd to rebuild, or START_P12.cmd for source launch.
+For startup diagnosis, run P12_DIAGNOSE_START.cmd and send P12_STARTUP_REPORT.zip.
+
+Validation: tests-full15-integrated.cjs passed, including Windows-fsync regression,
+transport, recovery, native pad-control bridge and unchanged Rossum encoder hash.
+No new Windows execution or Ozone editor validation was possible here.

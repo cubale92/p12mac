@@ -1,0 +1,18 @@
+P-12 NATIVE AUDIO JITTER FIX (October 4, 2026)
+====================================================
+- Audio callback uses tryEnter rather than blocking behind VST control/editor operations.
+  During graph mutation an audio block may be SILENT; this prevents a stall,
+  but is not glitch-free graph swapping and is NOT a finished realtime host.
+- Native sampler caches a per-block active pad/track routing mask. The main
+  mixer skips inactive routes instead of scanning 128 voices x 256 routes.
+- Native mode reduces legacy HTML mixer-meter repaints from 30 to 10 Hz.
+- SYSTEM jitter shows *UI timer drift*, which does not measure native callback
+  underruns. Native switch shows xruns, lock misses, and peak callback time.
+- The underlying browser-driven sequencer/IPC event scheduling remains and
+  can still jitter; true sample-accurate playback requires moving event
+  scheduling into JUCE. VSTs may add their own CPU spikes and latency.
+
+Windows: use BUILD_P12_WINDOWS_EXE.cmd in this source package, keep the last
+working version installed for rollback. Test with NO PLUGINS first, then add
+Track 1 VST, then Ozone. At 48kHz/512 samples the device callback has
+10.67 ms to finish. Compare callback xruns and lock misses to UI jitter.

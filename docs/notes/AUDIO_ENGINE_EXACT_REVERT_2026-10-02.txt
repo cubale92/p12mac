@@ -1,0 +1,27 @@
+P-12 v1.0 AUDIO ENGINE EXACT REVERT
+
+Reason:
+- The output-device UI fix changed the Web Audio startup/device-routing layer.
+- Sound was reported completely gone afterward.
+
+This build restores, byte-for-byte from the last known-good P-12 audio baseline:
+- initAudio()
+- updateAudioDeviceStatus()
+- populateAudioDeviceSelects()
+- Audio Output change handler
+- Audio Device panel open behavior
+
+Important:
+- The later Rossum/SP12 work remains in place.
+- Tune BF / Tune AT remain in place.
+- Direct BPM numeric entry remains in place.
+- No new setSinkId/audio-routing behavior was added in this recovery build.
+
+Validation performed:
+- Active HTML entry copies are byte-identical.
+- initAudio() matches the known-good baseline exactly.
+- All inline JavaScript blocks pass node --check.
+- ZIP integrity test passes.
+
+Hardware note:
+- This validates code/package integrity; actual Windows audio output still requires user-side runtime testing.

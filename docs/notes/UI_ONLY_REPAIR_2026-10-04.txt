@@ -1,0 +1,7 @@
+P-12 UI-only repair 2026-10-04
+
+- Rossum .sp12 imported native events now render directly on Track 1 from rossumEvents.
+- Native Mixer 32 meters receive visual-only peak telemetry for 32 pads, 8 tracks, and master.
+- No native audio samples are routed back through JavaScript.
+- VST processed-block counter label clarified; it is cumulative work, not an error count.
+- Existing native audio, Ozone/VST routing, SP-1200 export, BF/AT and timing behavior intentionally unchanged.

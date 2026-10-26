@@ -1,0 +1,148 @@
+P-12 Rossum corpus audit — native Tune / Multi-Pitch / Multi-Level
+
+Ground-truth firmware rules used:
+- Factory Multi-Pitch bytes: 07 06 04 02 00 0F 0D 0B
+- Signed 4-bit tune decode: 0..7 => +0..+7 semitones; 8..15 => -8..-1 semitones
+- Therefore factory Multi-Pitch => +7,+6,+4,+2,0,-1,-3,-5 (monotonic descending)
+- Factory Multi-Level bytes: 50 70 90 B0 C0 D0 E0 F0
+- Event high nibble is level; increasing 5,7,9,B,C,D,E,F gives increasing level.
+- A zero high nibble is treated as no explicit level override, not silence.
+
+Corpus:
+
+BurrentFile(1).sp12
+  active pads: A1, A2, A3, A7
+  A1: 0xF3 x17 -> tune +3 st, level 15/15
+  A2: 0xC5 x16 -> tune +5 st, level 12/15; 0xF5 x16 -> tune +5 st, level 15/15
+  A3: 0x04 x8 -> tune +4 st, level default
+  A7: 0x02 x2 -> tune +2 st, level default; 0x04 x2 -> tune +4 st, level default; 0x06 x3 -> tune +6 st, level default; 0x0F x3 -> tune -1 st, level default
+
+CurrentFile(1).sp12
+  active pads: A1, A2, A3, A7
+  A1: 0xF3 x18 -> tune +3 st, level 15/15
+  A2: 0xC5 x16 -> tune +5 st, level 12/15; 0xF5 x16 -> tune +5 st, level 15/15
+  A3: 0x04 x8 -> tune +4 st, level default
+  A7: 0x02 x2 -> tune +2 st, level default; 0x04 x2 -> tune +4 st, level default; 0x06 x3 -> tune +6 st, level default; 0x0F x3 -> tune -1 st, level default
+
+ElectroBoys(1).sp12
+  active pads: A1, A2, A3, A4, A5, A6, A7, A8
+  A1: 0x0F x8 -> tune -1 st, level default
+  A2: 0x0F x10 -> tune -1 st, level default
+  A3: 0x0F x10 -> tune -1 st, level default
+  A4: 0x0F x8 -> tune -1 st, level default
+  A5: 0xC0 x2 -> tune +0 st, level 12/15; 0xD1 x5 -> tune +1 st, level 13/15; 0xF0 x16 -> tune +0 st, level 15/15; 0xF1 x17 -> tune +1 st, level 15/15
+  A6: 0xD2 x16 -> tune +2 st, level 13/15; 0xF2 x16 -> tune +2 st, level 15/15
+  A7: 0xB1 x8 -> tune +1 st, level 11/15; 0xC0 x16 -> tune +0 st, level 12/15; 0xD1 x16 -> tune +1 st, level 13/15; 0xF0 x16 -> tune +0 st, level 15/15; 0xF1 x8 -> tune +1 st, level 15/15
+
+HAX         _(1).sp12
+  active pads: A1, A2, A3, A7, A8
+  A1: 0xD7 x3 -> tune +7 st, level 13/15; 0xF7 x16 -> tune +7 st, level 15/15
+  A2: 0x07 x32 -> tune +7 st, level default
+  A3: 0x07 x8 -> tune +7 st, level default
+  A7: 0x0E x4 -> tune -2 st, level default
+  A8: 0x03 x5 -> tune +3 st, level default; 0x04 x1 -> tune +4 st, level default; 0x06 x6 -> tune +6 st, level default
+
+PLOK        _(3).sp12
+  active pads: B1, B2, B3, B4, B5, A1, A2, A3, A4
+  A4: 0x0A x2 -> tune -6 st, level default
+
+RODE        _ (1).sp12
+  active pads: A1, A2, A3, A4, A5, A6, A7, A8
+  A1: 0x0C x4 -> tune -4 st, level default
+  A2: 0x0C x2 -> tune -4 st, level default
+  A3: 0x0C x4 -> tune -4 st, level default
+  A4: 0x0C x2 -> tune -4 st, level default
+  A5: 0xD0 x7 -> tune +0 st, level 13/15; 0xF0 x13 -> tune +0 st, level 15/15
+  A6: 0x0A x8 -> tune -6 st, level default
+  A7: 0xBA x8 -> tune -6 st, level 11/15; 0xDA x15 -> tune -6 st, level 13/15; 0xFA x9 -> tune -6 st, level 15/15
+  A8: 0x0D x4 -> tune -3 st, level default
+
+RODE        _(3).sp12
+  active pads: A1, A2, A3, A5, A6, A7
+  A1: 0xDD x16 -> tune -3 st, level 13/15; 0xFD x22 -> tune -3 st, level 15/15
+  A2: 0xBC x14 -> tune -4 st, level 11/15; 0xDC x32 -> tune -4 st, level 13/15; 0xFC x16 -> tune -4 st, level 15/15
+  A3: 0x0C x16 -> tune -4 st, level default
+  A5: 0x08 x4 -> tune -8 st, level default; 0x0A x4 -> tune -6 st, level default; 0x0D x4 -> tune -3 st, level default; 0x0F x4 -> tune -1 st, level default
+  A6: 0x0A x4 -> tune -6 st, level default; 0x9A x2 -> tune -6 st, level 9/15; 0xBA x6 -> tune -6 st, level 11/15; 0xCA x8 -> tune -6 st, level 12/15; 0xDA x6 -> tune -6 st, level 13/15; 0xEA x6 -> tune -6 st, level 14/15; 0xFA x4 -> tune -6 st, level 15/15
+  A7: 0x0A x2 -> tune -6 st, level default
+
+RurrentFile (1).sp12
+  active pads: A1, A2, A3, A7, A8
+  A1: 0x02 x2 -> tune +2 st, level default; 0x04 x2 -> tune +4 st, level default; 0x07 x3 -> tune +7 st, level default
+  A7: 0x02 x2 -> tune +2 st, level default; 0x04 x2 -> tune +4 st, level default; 0x07 x3 -> tune +7 st, level default
+
+RurrentFile(1).sp12
+  active pads: A1, A2, A3, A7, A8
+  A1: 0xD0 x4 -> tune +0 st, level 13/15; 0xF0 x12 -> tune +0 st, level 15/15
+  A2: 0xB4 x8 -> tune +4 st, level 11/15; 0xD4 x16 -> tune +4 st, level 13/15; 0xF4 x8 -> tune +4 st, level 15/15
+  A7: 0x07 x2 -> tune +7 st, level default
+  A8: 0x77 x2 -> tune +7 st, level 7/15; 0xB7 x2 -> tune +7 st, level 11/15; 0xD7 x2 -> tune +7 st, level 13/15; 0xF7 x2 -> tune +7 st, level 15/15
+
+WLOK        _(1).sp12
+  active pads: B1, B2, B3, B4, B5, A1, A2, A3, A4, A5, A6, A7, A8
+  A1: 0x0E x12 -> tune -2 st, level default
+  A2: 0x0E x8 -> tune -2 st, level default
+  A3: 0x0F x8 -> tune -1 st, level default
+  A4: 0xCF x16 -> tune -1 st, level 12/15; 0xFF x16 -> tune -1 st, level 15/15
+  A6: 0x0B x4 -> tune -5 st, level default; 0x0D x4 -> tune -3 st, level default; 0x0F x4 -> tune -1 st, level default
+  A8: 0x0E x1 -> tune -2 st, level default
+
+ZurrentFile(1).sp12
+  active pads: A1, A2, A3, A7, A8
+  A1: 0xD3 x4 -> tune +3 st, level 13/15; 0xF3 x12 -> tune +3 st, level 15/15
+  A2: 0xC1 x8 -> tune +1 st, level 12/15; 0xD1 x16 -> tune +1 st, level 13/15; 0xF1 x8 -> tune +1 st, level 15/15
+  A8: 0x02 x2 -> tune +2 st, level default; 0x04 x2 -> tune +4 st, level default; 0x06 x2 -> tune +6 st, level default; 0x07 x2 -> tune +7 st, level default
+
+_0 K        _(1).sp12
+  active pads: A1, A2, A3, A4, A5
+  A4: 0xB0 x16 -> tune +0 st, level 11/15; 0xD0 x32 -> tune +0 st, level 13/15; 0xF0 x16 -> tune +0 st, level 15/15
+  A5: 0x01 x3 -> tune +1 st, level default; 0x08 x2 -> tune -8 st, level default; 0x0A x6 -> tune -6 st, level default; 0x0B x2 -> tune -5 st, level default; 0x0D x4 -> tune -3 st, level default; 0x0F x4 -> tune -1 st, level default
+
+_LOK        _ (1).sp12
+  active pads: A1, A2, A3, A4, A5, A6
+  A1: 0xD0 x4 -> tune +0 st, level 13/15; 0xF0 x16 -> tune +0 st, level 15/15
+  A4: 0x02 x6 -> tune +2 st, level default; 0x04 x2 -> tune +4 st, level default; 0x0F x4 -> tune -1 st, level default
+  A5: 0x0B x2 -> tune -5 st, level default; 0x0D x2 -> tune -3 st, level default; 0x5B x1 -> tune -5 st, level 5/15; 0x9B x1 -> tune -5 st, level 9/15; 0xCB x1 -> tune -5 st, level 12/15; 0xEB x1 -> tune -5 st, level 14/15
+
+_LOK        _(1).sp12
+  active pads: A1, A2, A3, A4, A5, A6
+  A1: 0xD0 x4 -> tune +0 st, level 13/15; 0xF0 x16 -> tune +0 st, level 15/15
+  A4: 0x02 x6 -> tune +2 st, level default; 0x04 x2 -> tune +4 st, level default; 0x0F x4 -> tune -1 st, level default
+  A5: 0x0B x2 -> tune -5 st, level default; 0x0D x2 -> tune -3 st, level default; 0x5B x1 -> tune -5 st, level 5/15; 0x9B x1 -> tune -5 st, level 9/15; 0xCB x1 -> tune -5 st, level 12/15; 0xEB x1 -> tune -5 st, level 14/15
+
+_LOK        _(2).sp12
+  active pads: C1, C2, C3, B1, B2, B3, B4, A1, A2, A3, A4, A5, A6, A7, A8
+  C1: 0xCD x8 -> tune -3 st, level 12/15; 0xFD x32 -> tune -3 st, level 15/15
+  C2: 0x0D x64 -> tune -3 st, level default
+  C3: 0x0D x16 -> tune -3 st, level default
+  B1: 0x0E x4 -> tune -2 st, level default
+  B2: 0x0E x6 -> tune -2 st, level default
+  B3: 0x0E x4 -> tune -2 st, level default
+  B4: 0x0E x2 -> tune -2 st, level default
+  A1: 0x0D x2 -> tune -3 st, level default
+  A2: 0x0D x2 -> tune -3 st, level default
+  A3: 0x0D x2 -> tune -3 st, level default
+  A4: 0x0D x2 -> tune -3 st, level default
+  A5: 0x0D x2 -> tune -3 st, level default
+  A6: 0x0D x2 -> tune -3 st, level default
+  A7: 0x0D x2 -> tune -3 st, level default
+  A8: 0x0D x2 -> tune -3 st, level default
+
+y(1).sp12
+  active pads: A1, A2, A3, A4, A6, A7
+  A7: 0x01 x2 -> tune +1 st, level default; 0x04 x2 -> tune +4 st, level default; 0x06 x2 -> tune +6 st, level default; 0x0F x2 -> tune -1 st, level default
+
+Key HAX correction:
+- HAX active pads are A1, A2, A3, A7, A8. There is no active Bank D sound in HAX.
+- HAX A7 code 0x0E is -2 semitones under the firmware encoding (old P-12 incorrectly made it -7).
+- HAX A8 codes 0x06/0x03/0x04 are +6/+3/+4 semitones.
+
+Key cross-project correction:
+- RODE contains low nibble 0x0D, which is -3 semitones. Old P-12 7-code math made it -6: exactly a 3-semitone over-downshift.
+- _LOK contains 0x0B/0x0D etc; signed-nibble decoding handles these without a project-specific offset.
+
+P-12 changes in this build:
+- Native Rossum Tune AT uses signed 4-bit semitone decoding/encoding.
+- Native event high-nibble level is preserved in playback (Multi-Level / dynamics).
+- Tune BF remains a separate pre-sample stage; import does not invent a Tune BF correction.
+- Native event ticks, PPQ, Time Correct, swing and adaptive grid were not changed.
